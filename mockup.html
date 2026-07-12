@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Champions 7-0 - Team Management & Soccer Champs Match Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark-navy: #091128;
+      --bg-header-white: #ffffff;
+      --bg-subheader-black: #0d131f;
+      --pitch-grass: #188632;
+      --pitch-border: #4ade80;
+      --card-white: #ffffff;
+      --card-blue-border: #2563eb;
+      --card-ovr-color: #1e40af;
+      --pos-badge-green: #22c55e;
+      --pos-badge-yellow: #eab308;
+      --panel-gray: #cbd5e1;
+      --panel-header-gray: #475569;
+      --soccer-blue-bg: #0c1633;
+      --zone-def: #3b82f6;
+      --zone-mid: #eab308;
+      --zone-att: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-dark-navy);
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ========================================================
+       HEADER E SUB-HEADER (COMUNS A TODAS AS TELAS)
+    ======================================================== */
+    .top-navbar {
+      background-color: var(--bg-header-white);
+      color: #1e293b;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 50;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-menu {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #334155;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .team-badge-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .team-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #1d4ed8;
+      margin: 0;
+      letter-spacing: -0.5px;
+    }
+
+    .btn-action-glow {
+      background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+      color: #fff;
+      border: 2px solid #4ade80;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-weight: 900;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-action-glow:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 22px rgba(34, 197, 94, 0.8);
+    }
+
+    .sub-navbar {
+      background-color: var(--bg-subheader-black);
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .tabs-group {
+      display: flex;
+      gap: 6px;
+      background-color: #1e293b;
+      padding: 3px;
+      border-radius: 20px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background-color: #ffffff;
+      color: #1d4ed8;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .resources-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .res-pill {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 3px 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    /* ========================================================
+       SISTEMA DE TELAS (TABS/VIEWS)
+    ======================================================== */
+    .view-screen {
+      display: none;
+      flex: 1;
+    }
+
+    .view-screen.active-view {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ========================================================
+       TELA 1: TEAM MANAGEMENT (GRAMADO 3D E SUBSTITUIÇÕES)
+    ======================================================== */
+    .main-workspace {
+      flex: 1;
+      background: radial-gradient(circle at 30% 50%, #11224f 0%, #081026 100%);
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.015) 0px,
+        rgba(255, 255, 255, 0.015) 2px,
+        transparent 2px,
+        transparent 16px
+      );
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    @media (min-width: 1024px) {
+      .main-workspace {
+        grid-template-columns: 1fr 380px;
+        padding: 24px 32px;
+      }
+    }
+
+    .pitch-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .pitch-perspective-box {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      perspective: 1200px;
+      position: relative;
+    }
+
+    .pitch-surface {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #166534 0%, #15803d 50%, #16a34a 100%);
+      border: 6px solid #22c55e;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), inset 0 0 50px rgba(0, 0, 0, 0.3);
+      position: relative;
+      transform: rotateX(22deg) scale(0.96);
+      transform-style: preserve-3d;
+      overflow: hidden;
+      background-image: repeating-linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.08) 0px,
+        rgba(0, 0, 0, 0.08) 35px,
+        transparent 35px,
+        transparent 70px
+      );
+    }
+
+    .line-half { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: rgba(255,255,255,0.5); transform: translateY(-50%); }
+    .line-circle { position: absolute; top: 50%; left: 50%; width: 110px; height: 110px; border: 2px solid rgba(255,255,255,0.5); border-radius: 50%; transform: translate(-50%, -50%); }
+    .line-box-top { position: absolute; top: 0; left: 28%; right: 28%; height: 22%; border: 2px solid rgba(255,255,255,0.5); border-top: none; }
+    .line-box-bottom { position: absolute; bottom: 0; left: 28%; right: 28%; height: 22%; border: 2px solid rgba(255,255,255,0.5); border-bottom: none; }
+
+    .player-slot {
+      position: absolute;
+      transform: translate(-50%, -50%) rotateX(-22deg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .player-slot:hover { transform: translate(-50%, -55%) rotateX(-22deg) scale(1.12); z-index: 30; }
+    .player-slot.selected-slot .ovr-circle { border-color: #ffd700 !important; box-shadow: 0 0 18px #ffd700, inset 0 0 8px #ffd700 !important; animation: pulse-select 1.2s infinite alternate; }
+
+    @keyframes pulse-select { 0% { transform: scale(1.05); } 100% { transform: scale(1.18); } }
+
+    .pos-badge { background-color: var(--pos-badge-green); color: #fff; font-size: 0.62rem; font-weight: 900; padding: 1px 7px; border-radius: 8px 8px 0 0; border: 1px solid #15803d; border-bottom: none; text-transform: uppercase; z-index: 2; box-shadow: 0 -2px 4px rgba(0,0,0,0.2); }
+    .pos-gk-badge { background-color: #eab308; color: #000; border-color: #ca8a04; }
+    .pos-cf-badge { background-color: #3b82f6; color: #fff; border-color: #1d4ed8; }
+    .pos-am-badge { background-color: #10b981; color: #fff; border-color: #047857; }
+
+    .ovr-circle { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); border: 3px solid var(--card-blue-border); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); position: relative; margin-top: -2px; }
+    .ovr-number { font-size: 1.05rem; font-weight: 900; color: var(--card-ovr-color); line-height: 1; }
+    .ovr-captain { position: absolute; left: -4px; top: 6px; background-color: #ffd700; color: #000; font-size: 0.55rem; font-weight: 900; padding: 1px 3px; border-radius: 3px; border: 1px solid #b8860b; }
+    .player-label { font-size: 0.75rem; font-weight: 800; color: #ffffff; text-shadow: 0 2px 4px #000000; margin-top: 3px; white-space: nowrap; background-color: rgba(0, 0, 0, 0.4); padding: 1px 6px; border-radius: 4px; }
+
+    .tactical-footer-bar { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-top: -10px; z-index: 20; gap: 12px; }
+    .tactic-btn { background: linear-gradient(180deg, #64748b 0%, #475569 100%); border: 2px solid #94a3b8; border-radius: 20px; padding: 6px 18px; display: flex; flex-direction: column; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); min-width: 120px; }
+    .tactic-label { font-size: 0.65rem; color: #e2e8f0; font-weight: 700; text-transform: uppercase; }
+    .tactic-value { font-size: 0.9rem; color: #ffffff; font-weight: 900; }
+
+    .formation-selector { background: linear-gradient(180deg, #334155 0%, #1e293b 100%); border: 2px solid #64748b; border-radius: 24px; padding: 4px 12px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+    .arrow-btn { width: 28px; height: 28px; border-radius: 50%; background-color: #2563eb; color: #fff; border: none; font-weight: 900; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .formation-text { font-size: 1.1rem; font-weight: 900; color: #fff; min-width: 55px; text-align: center; }
+
+    .subs-res-wrapper { width: 100%; background-color: var(--panel-gray); border-radius: 12px; border: 3px solid #94a3b8; box-shadow: 0 15px 30px rgba(0,0,0,0.6); overflow: hidden; display: flex; flex-direction: column; }
+    .panel-headers-row { display: grid; grid-template-columns: 1fr 90px; background-color: var(--panel-header-gray); color: #ffffff; font-size: 0.8rem; font-weight: 800; border-bottom: 2px solid #334155; }
+    .header-subs { padding: 8px 12px; border-right: 2px solid #334155; }
+    .header-res { padding: 8px 12px; text-align: center; }
+    .panel-grids-row { display: grid; grid-template-columns: 1fr 90px; background-color: #e2e8f0; padding: 12px 8px; max-height: 440px; overflow-y: auto; gap: 6px; }
+    .grid-subs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 6px; border-right: 2px solid #cbd5e1; padding-right: 8px; }
+    .grid-res { display: grid; grid-template-columns: 1fr; gap: 12px; padding-left: 4px; align-content: flex-start; }
+
+    .mini-card { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s; }
+    .mini-card:hover { transform: scale(1.08); }
+    .mini-card.selected-sub .ovr-circle { border-color: #ffd700 !important; box-shadow: 0 0 14px #ffd700 !important; animation: pulse-select 1.2s infinite alternate; }
+    .mini-card .pos-badge { font-size: 0.55rem; padding: 1px 5px; }
+    .mini-card .ovr-circle { width: 38px; height: 38px; border-width: 2px; }
+    .mini-card .ovr-number { font-size: 0.9rem; }
+    .mini-card .player-label { font-size: 0.65rem; color: #1e293b; text-shadow: none; font-weight: 700; background: none; margin-top: 2px; }
+
+    /* ========================================================
+       TELA 2: SOCCER CHAMPS LINEUP PREVIEW (INSPIRADA NA FOTO)
+    ======================================================== */
+    .lineup-screen-container {
+      flex: 1;
+      background: radial-gradient(circle at 50% 30%, #162456 0%, #080f26 100%);
+      background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.03) 0px,
+        rgba(255, 255, 255, 0.03) 3px,
+        transparent 3px,
+        transparent 20px
+      );
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .matchup-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 24px;
+      width: 100%;
+      max-width: 850px;
+      background: rgba(13, 22, 51, 0.85);
+      border: 2px solid #3b82f6;
+      border-radius: 16px;
+      padding: 14px 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    }
+
+    .team-lineup-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .team-lineup-sub { font-size: 0.75rem; color: #94a3b8; font-weight: 700; }
+
+    .matchup-circle-vs {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .flag-circle-big {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid #60a5fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+
+    /* Tabela de Confronto Face a Face (11 vs 11) */
+    .lineup-table {
+      width: 100%;
+      max-width: 850px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .lineup-row {
+      display: grid;
+      grid-template-columns: 1fr 40px 40px 1fr;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 6px 12px;
+      transition: all 0.2s;
+    }
+
+    .lineup-row:hover {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: #3b82f6;
+      transform: scale(1.01);
+    }
+
+    .player-left {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      text-align: right;
+    }
+
+    .player-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .ovr-tag {
+      font-weight: 900;
+      font-size: 1.05rem;
+      color: #ffffff;
+      min-width: 32px;
+    }
+
+    .stars-box {
+      color: #ffd700;
+      font-size: 0.75rem;
+      letter-spacing: -1px;
+    }
+
+    .player-name-text {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #f8fafc;
+      flex: 1;
+    }
+
+    .shirt-num {
+      font-size: 0.85rem;
+      font-weight: 900;
+      color: #94a3b8;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* Bonequinhos 2D estilo Soccer Champs / Retro Pixel */
+    .retro-avatar {
+      width: 28px;
+      height: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .retro-head {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: #fcd34d;
+      border: 1.5px solid #000;
+      margin-bottom: -2px;
+      z-index: 2;
+    }
+
+    .retro-body-left {
+      width: 22px;
+      height: 16px;
+      background-color: #facc15; /* Camisa Brasil */
+      border: 1.5px solid #000;
+      border-radius: 4px 4px 0 0;
+      position: relative;
+    }
+
+    .retro-body-right {
+      width: 22px;
+      height: 16px;
+      background-color: #ffffff; /* Camisa Inglaterra */
+      border: 1.5px solid #000;
+      border-radius: 4px 4px 0 0;
+      position: relative;
+    }
+
+    .retro-shorts-left { width: 18px; height: 6px; background-color: #1d4ed8; border: 1.5px solid #000; }
+    .retro-shorts-right { width: 18px; height: 6px; background-color: #1e293b; border: 1.5px solid #000; }
+
+    /* ========================================================
+       TELA 3: SIMULAÇÃO DA PARTIDA & BARRA DE TERRITÓRIO/ATLETAS
+    ======================================================== */
+    .match-simulation-container {
+      flex: 1;
+      background: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .match-scoreboard {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border: 3px solid #3b82f6;
+      border-radius: 20px;
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+    }
+
+    .score-team { display: flex; align-items: center; gap: 14px; font-size: 1.4rem; font-weight: 900; }
+    .score-numbers { font-size: 2.8rem; font-weight: 900; color: #ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+    .score-timer { background: #ef4444; color: #fff; font-size: 0.85rem; font-weight: 900; padding: 4px 12px; border-radius: 12px; animation: pulse-timer 1s infinite; }
+
+    @keyframes pulse-timer { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+    /* BARRA DE PROGRESSÃO COM ATLETAS (TERRITÓRIO & ATAQUE/DEFESA) */
+    .territory-box {
+      width: 100%;
+      max-width: 850px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 2px solid #475569;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .territory-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #e2e8f0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .zone-labels {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 0.75rem;
+      font-weight: 900;
+    }
+
+    .lbl-def { color: #60a5fa; }
+    .lbl-mid { color: #facc15; }
+    .lbl-att { color: #f87171; }
+
+    /* A BARRA DE PROGRESSO DE CAMPO */
+    .momentum-track {
+      width: 100%;
+      height: 48px;
+      background: linear-gradient(90deg, 
+        rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.3) 30%, 
+        rgba(234, 179, 8, 0.3) 30%, rgba(234, 179, 8, 0.3) 70%, 
+        rgba(239, 68, 68, 0.3) 70%, rgba(239, 68, 68, 0.3) 100%);
+      border: 3px solid #64748b;
+      border-radius: 25px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      box-shadow: inset 0 4px 10px rgba(0,0,0,0.6);
+    }
+
+    /* Linhas divisórias das áreas dentro da barra */
+    .momentum-divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: rgba(255,255,255,0.4);
+      border-right: 1px dashed rgba(0,0,0,0.5);
+    }
+
+    /* Atleta / Bola que se move na barra */
+    .athlete-marker {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      color: #0f172a;
+      font-weight: 900;
+      font-size: 0.85rem;
+      padding: 4px 14px;
+      border-radius: 20px;
+      border: 3px solid #2563eb;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      z-index: 5;
+    }
+
+    .athlete-icon { font-size: 1.2rem; animation: bounce-athlete 0.5s infinite alternate; }
+    @keyframes bounce-athlete { from { transform: translateY(-2px); } to { transform: translateY(2px); } }
+
+    .status-badge-live {
+      text-align: center;
+      padding: 10px;
+      border-radius: 10px;
+      font-weight: 900;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
+    }
+
+    .status-def { background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #93c5fd; }
+    .status-mid { background: rgba(234, 179, 8, 0.2); border: 1px solid #eab308; color: #fde047; }
+    .status-att { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; }
+
+    /* Feed de Narração da Partida */
+    .commentary-feed {
+      width: 100%;
+      max-width: 850px;
+      background: #0d131f;
+      border: 2px solid #334155;
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .comm-item { display: flex; gap: 12px; align-items: flex-start; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+    .comm-time { font-weight: 900; color: #ffd700; min-width: 38px; }
+    .comm-text { color: #e2e8f0; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <!-- Alerta Superior de Troca de Jogador -->
+  <div id="swap-notice" style="position: fixed; top: 65px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #ffd700, #eab308); color: #000; font-weight: 900; padding: 10px 24px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 100; display: none; align-items: center; gap: 10px;">
+    <span>✨ Jogador selecionado! Agora clique em outro jogador no gramado ou banco para substituir.</span>
+  </div>
+
+  <!-- 1. HEADER SUPERIOR -->
+  <header class="top-navbar">
+    <div class="nav-left">
+      <button class="btn-menu">☰</button>
+      <div class="team-badge-circle">🇧🇷</div>
+      <h1 class="team-title">Seleção Brasileira</h1>
+    </div>
+    
+    <!-- Botões de Ação Dinâmicos por Tela -->
+    <div style="display: flex; gap: 10px;">
+      <button class="btn-action-glow" id="btn-go-lineup" onclick="switchView('lineup')">
+        ⚽ IR PARA PARTIDA (SOCCER CHAMPS PREVIEW)
+      </button>
+      <button class="btn-action-glow" id="btn-start-match" style="display: none; background: linear-gradient(135deg, #ef4444, #b91c1c); border-color: #f87171;" onclick="switchView('match')">
+        ▶️ INICIAR BOLA ROLANDO (SIMULAR AO VIVO)
+      </button>
+      <button class="btn-action-glow" id="btn-back-team" style="display: none; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-color: #60a5fa;" onclick="switchView('team')">
+        ⚙️ VOLTAR AO TEAM MANAGEMENT
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. SUB-HEADER BARRA PRETA -->
+  <nav class="sub-navbar">
+    <div class="tabs-group">
+      <button class="tab-btn active" id="tab-team" onclick="switchView('team')">MY TEAM</button>
+      <button class="tab-btn" id="tab-lineup" onclick="switchView('lineup')">LINEUP VS (SOCCER CHAMPS)</button>
+      <button class="tab-btn" id="tab-match" onclick="switchView('match')">MATCH LIVE & MOMENTUM BAR</button>
+    </div>
+    <div class="resources-group">
+      <div class="res-pill"><span class="res-icon">⚡</span> 16</div>
+      <div class="res-pill"><span class="res-icon">💼</span> 6</div>
+      <div class="res-pill" style="color: #ffd700;"><span class="res-icon">🪙</span> 159</div>
+    </div>
+  </nav>
+
+  <!-- ========================================================
+       VIEW 1: TEAM MANAGEMENT (GRAMADO 3D)
+  ======================================================== -->
+  <div class="view-screen active-view" id="view-team">
+    <main class="main-workspace">
+      <!-- Gramado em Perspectiva 3D -->
+      <div class="pitch-wrapper">
+        <div class="pitch-perspective-box">
+          <div class="pitch-surface">
+            <div class="line-half"></div>
+            <div class="line-circle"></div>
+            <div class="line-box-top"></div>
+            <div class="line-box-bottom"></div>
+
+            <div class="player-slot" style="top: 14%; left: 50%;" id="slot-0" onclick="handleSlotClick(0, 'campo')">
+              <span class="pos-badge pos-cf-badge">CF</span>
+              <div class="ovr-circle"><span class="ovr-captain">C</span><span class="ovr-number">88</span></div>
+              <span class="player-label">Endrick</span>
+            </div>
+            <div class="player-slot" style="top: 30%; left: 32%;" id="slot-1" onclick="handleSlotClick(1, 'campo')">
+              <span class="pos-badge pos-am-badge">AM</span>
+              <div class="ovr-circle"><span class="ovr-number">85</span></div>
+              <span class="player-label">Vini Jr</span>
+            </div>
+            <div class="player-slot" style="top: 30%; left: 68%;" id="slot-2" onclick="handleSlotClick(2, 'campo')">
+              <span class="pos-badge pos-am-badge">AM</span>
+              <div class="ovr-circle"><span class="ovr-number">83</span></div>
+              <span class="player-label">Rodrygo</span>
+            </div>
+            <div class="player-slot" style="top: 42%; left: 14%;" id="slot-3" onclick="handleSlotClick(3, 'campo')">
+              <span class="pos-badge">LW</span>
+              <div class="ovr-circle"><span class="ovr-number">85</span></div>
+              <span class="player-label">Martinelli</span>
+            </div>
+            <div class="player-slot" style="top: 42%; left: 86%;" id="slot-4" onclick="handleSlotClick(4, 'campo')">
+              <span class="pos-badge">RW</span>
+              <div class="ovr-circle"><span class="ovr-number">85</span></div>
+              <span class="player-label">Raphinha</span>
+            </div>
+            <div class="player-slot" style="top: 54%; left: 50%;" id="slot-5" onclick="handleSlotClick(5, 'campo')">
+              <span class="pos-badge">DM</span>
+              <div class="ovr-circle"><span class="ovr-number">83</span></div>
+              <span class="player-label">Bruno G.</span>
+            </div>
+            <div class="player-slot" style="top: 68%; left: 18%;" id="slot-6" onclick="handleSlotClick(6, 'campo')">
+              <span class="pos-badge pos-yellow">LB</span>
+              <div class="ovr-circle"><span class="ovr-number">81</span></div>
+              <span class="player-label">Arana</span>
+            </div>
+            <div class="player-slot" style="top: 74%; left: 38%;" id="slot-7" onclick="handleSlotClick(7, 'campo')">
+              <span class="pos-badge">CB</span>
+              <div class="ovr-circle"><span class="ovr-number">83</span></div>
+              <span class="player-label">Gabriel M.</span>
+            </div>
+            <div class="player-slot" style="top: 74%; left: 62%;" id="slot-8" onclick="handleSlotClick(8, 'campo')">
+              <span class="pos-badge">CB</span>
+              <div class="ovr-circle"><span class="ovr-number">84</span></div>
+              <span class="player-label">Marquinhos</span>
+            </div>
+            <div class="player-slot" style="top: 68%; left: 82%;" id="slot-9" onclick="handleSlotClick(9, 'campo')">
+              <span class="pos-badge">RB</span>
+              <div class="ovr-circle"><span class="ovr-number">84</span></div>
+              <span class="player-label">Danilo</span>
+            </div>
+            <div class="player-slot" style="top: 88%; left: 50%;" id="slot-10" onclick="handleSlotClick(10, 'campo')">
+              <span class="pos-badge pos-gk-badge">GK</span>
+              <div class="ovr-circle"><span class="ovr-number">84</span></div>
+              <span class="player-label">Alisson</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra Inferior Tática -->
+        <div class="tactical-footer-bar">
+          <div class="tactic-btn" onclick="toggleMentality()">
+            <span class="tactic-label">Mentality</span>
+            <span class="tactic-value" id="val-mentality">Neutral</span>
+          </div>
+          <div class="formation-selector">
+            <button class="arrow-btn" onclick="changeFormation(-1)">&lt;</button>
+            <span class="formation-text" id="val-formation">4-5-1</span>
+            <button class="arrow-btn" onclick="changeFormation(1)">&gt;</button>
+          </div>
+          <div class="tactic-btn" onclick="togglePressure()">
+            <span class="tactic-label">Pressure</span>
+            <span class="tactic-value" id="val-pressure">Normal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Painel Cinza de Reservas -->
+      <aside class="subs-res-wrapper">
+        <div class="panel-headers-row">
+          <div class="header-subs">SUBSTITUTES</div>
+          <div class="header-res">RES</div>
+        </div>
+        <div class="panel-grids-row">
+          <div class="grid-subs">
+            <div class="mini-card" id="sub-0" onclick="handleSlotClick(0, 'sub')"><span class="pos-badge pos-gk-badge">GK</span><div class="ovr-circle"><span class="ovr-number">82</span></div><span class="player-label">Ederson</span></div>
+            <div class="mini-card" id="sub-1" onclick="handleSlotClick(1, 'sub')"><span class="pos-badge">LW</span><div class="ovr-circle"><span class="ovr-number">82</span></div><span class="player-label">Savinho</span></div>
+            <div class="mini-card" id="sub-2" onclick="handleSlotClick(2, 'sub')"><span class="pos-badge pos-cf-badge">CF</span><div class="ovr-circle"><span class="ovr-number">81</span></div><span class="player-label">Pedro</span></div>
+            <div class="mini-card" id="sub-3" onclick="handleSlotClick(3, 'sub')"><span class="pos-badge pos-am-badge">AM</span><div class="ovr-circle"><span class="ovr-number">80</span></div><span class="player-label">Paquetá</span></div>
+            <div class="mini-card" id="sub-4" onclick="handleSlotClick(4, 'sub')"><span class="pos-badge pos-am-badge">AM</span><div class="ovr-circle"><span class="ovr-number">81</span></div><span class="player-label">Andreas</span></div>
+            <div class="mini-card" id="sub-5" onclick="handleSlotClick(5, 'sub')"><span class="pos-badge pos-am-badge">AM</span><div class="ovr-circle"><span class="ovr-number">81</span></div><span class="player-label">Gerson</span></div>
+            <div class="mini-card" id="sub-6" onclick="handleSlotClick(6, 'sub')"><span class="pos-badge">CB</span><div class="ovr-circle"><span class="ovr-number">83</span></div><span class="player-label">Militão</span></div>
+            <div class="mini-card" id="sub-7" onclick="handleSlotClick(7, 'sub')"><span class="pos-badge">LW</span><div class="ovr-circle"><span class="ovr-number">84</span></div><span class="player-label">Neymar Jr</span></div>
+            <div class="mini-card" id="sub-8" onclick="handleSlotClick(8, 'sub')"><span class="pos-badge">LW</span><div class="ovr-circle"><span class="ovr-number">84</span></div><span class="player-label">Estevão</span></div>
+          </div>
+          <div class="grid-res">
+            <div class="mini-card" id="res-0" onclick="handleSlotClick(0, 'res')"><span class="pos-badge">RB</span><div class="ovr-circle"><span class="ovr-number">81</span></div><span class="player-label">Yan Couto</span></div>
+            <div class="mini-card" id="res-1" onclick="handleSlotClick(1, 'res')"><span class="pos-badge">RB</span><div class="ovr-circle"><span class="ovr-number">84</span></div><span class="player-label">Arthur</span></div>
+            <div class="mini-card" id="res-2" onclick="handleSlotClick(2, 'res')"><span class="pos-badge">RB</span><div class="ovr-circle"><span class="ovr-number">84</span></div><span class="player-label">Vanderson</span></div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- ========================================================
+       VIEW 2: SOCCER CHAMPS LINEUP PREVIEW (INSPIRADO NA FOTO)
+  ======================================================== -->
+  <div class="view-screen" id="view-lineup">
+    <div class="lineup-screen-container">
+      
+      <!-- Banner Superior de Confronto -->
+      <div class="matchup-banner">
+        <div class="team-lineup-title" style="text-align: right;">
+          <span>BRAZIL</span>
+          <span class="team-lineup-sub" id="lineup-formation-br">4-5-1</span>
+        </div>
+        <div class="matchup-circle-vs">
+          <div class="flag-circle-big">🇧🇷</div>
+          <span style="font-size: 1.5rem; font-weight: 900; color: #60a5fa;">VS</span>
+          <div class="flag-circle-big">🏴󠁧󠁢󠁥󠁮󠁧󠁿</div>
+        </div>
+        <div class="team-lineup-title" style="text-align: left;">
+          <span>ENGLAND</span>
+          <span class="team-lineup-sub">3-4-3</span>
+        </div>
+      </div>
+
+      <!-- Tabela 11 vs 11 no Estilo Retro 2D -->
+      <div class="lineup-table">
+        <!-- 1. Goleiros -->
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">89</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Alisson (C)</span>
+          </div>
+          <div class="shirt-num">1</div>
+          <div class="shirt-num">13</div>
+          <div class="player-right">
+            <div class="retro-avatar"><div class="retro-head"></div><div class="retro-body-right"></div><div class="retro-shorts-right"></div></div>
+            <span class="player-name-text">Sam Jackson</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">82</span>
+          </div>
+        </div>
+
+        <!-- 2. Defesa -->
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">84</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Danilo</span>
+          </div>
+          <div class="shirt-num">2</div>
+          <div class="shirt-num">6</div>
+          <div class="player-right">
+            <div class="retro-avatar"><div class="retro-head"></div><div class="retro-body-right"></div><div class="retro-shorts-right"></div></div>
+            <span class="player-name-text">Rocky Burgess</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">83</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">84</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Marquinhos</span>
+          </div>
+          <div class="shirt-num">4</div>
+          <div class="shirt-num">18</div>
+          <div class="player-right">
+            <div class="retro-avatar"><div class="retro-head"></div><div class="retro-body-right"></div><div class="retro-shorts-right"></div></div>
+            <span class="player-name-text">Rio Davies</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">84</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">83</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Gabriel M.</span>
+          </div>
+          <div class="shirt-num">3</div>
+          <div class="shirt-num">21</div>
+          <div class="player-right">
+            <div class="retro-avatar"><div class="retro-head"></div><div class="retro-body-right"></div><div class="retro-shorts-right"></div></div>
+            <span class="player-name-text">Steven Beames</span><span class="stars-box">⭐⭐⭐⭐⭐</span><span class="ovr-tag">87</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">81</span><span class="stars-box">⭐⭐⭐</span><span class="player-name-text">Arana</span>
+          </div>
+          <div class="shirt-num">6</div>
+          <div class="shirt-num">4</div>
+          <div class="player-right">
+            <div class="retro-avatar"><div class="retro-head"></div><div class="retro-body-right"></div><div class="retro-shorts-right"></div></div>
+            <span class="player-name-text">Westley Scott</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">84</span>
+          </div>
+        </div>
+
+        <!-- 3. Meio Campo -->
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">83</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Bruno G.</span>
+          </div>
+          <div class="shirt-num">5</div>
+          <div class="shirt-num">5</div>
+          <div class="player-right">
+            <div class="retro-avatar"><div class="retro-head"></div><div class="retro-body-right"></div><div class="retro-shorts-right"></div></div>
+            <span class="player-name-text">Kevin Evans</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">84</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">85</span><span class="stars-box">⭐⭐⭐⭐⭐</span><span class="player-name-text">Vini Jr</span>
+          </div>
+          <div class="shirt-num">7</div>
+          <div class="shirt-num">19</div>
+          <div class="player-right">
+            <div class="retro-avatar"><div class="retro-head"></div><div class="retro-body-right"></div><div class="retro-shorts-right"></div></div>
+            <span class="player-name-text">Josh Hancock</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">85</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">83</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Rodrygo</span>
+          </div>
+          <div class="shirt-num">10</div>
+          <div class="shirt-num">7</div>
+          <div class="player-right">
+            <div class="retro-avatar"><div class="retro-head"></div><div class="retro-body-right"></div><div class="retro-shorts-right"></div></div>
+            <span class="player-name-text">Jonathan Minors</span><span class="stars-box">⭐⭐⭐</span><span class="ovr-tag">82</span>
+          </div>
+        </div>
+
+        <!-- 4. Ataque -->
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">85</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Raphinha</span>
+          </div>
+          <div class="shirt-num">11</div>
+          <div class="shirt-num">11</div>
+          <div class="player-right">
+            <div class="retro-avatar"><div class="retro-head"></div><div class="retro-body-right"></div><div class="retro-shorts-right"></div></div>
+            <span class="player-name-text">Karl Bell</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">84</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">85</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Martinelli</span>
+          </div>
+          <div class="shirt-num">20</div>
+          <div class="shirt-num">9</div>
+          <div class="player-right">
+            <div class="retro-avatar"><div class="retro-head"></div><div class="retro-body-right"></div><div class="retro-shorts-right"></div></div>
+            <span class="player-name-text">Sam Wimble</span><span class="stars-box">⭐⭐⭐⭐⭐</span><span class="ovr-tag">88</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">88</span><span class="stars-box">⭐⭐⭐⭐⭐</span><span class="player-name-text">Endrick</span>
+          </div>
+          <div class="shirt-num">9</div>
+          <div class="shirt-num">10</div>
+          <div class="player-right">
+            <div class="retro-avatar"><div class="retro-head"></div><div class="retro-body-right"></div><div class="retro-shorts-right"></div></div>
+            <span class="player-name-text">Richard Simpson</span><span class="stars-box">⭐⭐⭐⭐⭐</span><span class="ovr-tag">87</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================
+       VIEW 3: PARTIDA AO VIVO & BARRA DE TERRITÓRIO/ATLETAS
+  ======================================================== -->
+  <div class="view-screen" id="view-match">
+    <div class="match-simulation-container">
+      
+      <!-- Placar da Partida -->
+      <div class="match-scoreboard">
+        <div class="score-team"><span>🇧🇷 BRASIL</span></div>
+        <div class="score-numbers" id="score-text">1 x 0</div>
+        <div class="score-team"><span>INGLATERRA 🏴󠁧󠁢󠁥󠁮󠁧󠁿</span></div>
+        <div class="score-timer" id="match-timer">34' MIN</div>
+      </div>
+
+      <!-- BARRA DE PROGRESSÃO COM ATLETAS (ATAQUE/DEFESA/NEUTRO) -->
+      <div class="territory-box">
+        <div class="territory-header">
+          <span>Barra de Progresso e Território de Campo (Momentum Tracker)</span>
+          <span style="color: #60a5fa;" id="current-zone-lbl">Ataque Pressionando 🔥</span>
+        </div>
+
+        <div class="zone-labels">
+          <span class="lbl-def">🛡️ DEFESA (0 - 33%)</span>
+          <span class="lbl-mid">⚖️ NEUTRO / MEIO (34 - 66%)</span>
+          <span class="lbl-att">⚔️ ATAQUE / PERIGO (67 - 100%)</span>
+        </div>
+
+        <!-- O TRILHO DA BARRA COM AS 3 ÁREAS -->
+        <div class="momentum-track">
+          <div class="momentum-divider" style="left: 33.33%;"></div>
+          <div class="momentum-divider" style="left: 66.66%;"></div>
+
+          <!-- ATLETA ANIMADO MOSTRANDO ONDE ESTÁ A BOLA / PRESSÃO -->
+          <div class="athlete-marker" id="live-athlete" style="left: 80%;">
+            <span class="athlete-icon">🏃‍♂️⚽</span>
+            <span id="athlete-team-name">🇧🇷 BRASIL (ATAQUE)</span>
+          </div>
+        </div>
+
+        <!-- Badge Dinâmico de Status -->
+        <div class="status-badge-live status-att" id="status-desc">
+          ⚡ ZONA DE PERIGO: Endrick avança com a bola no campo de ataque da Inglaterra buscando o segundo gol!
+        </div>
+      </div>
+
+      <!-- Feed de Lances em Tempo Real -->
+      <div class="commentary-feed" id="commentary-feed">
+        <div class="comm-item"><span class="comm-time">34'</span><span class="comm-text">Endrick arranca em velocidade pela zona ofensiva e tenta o passe de calcanhar para Vini Jr!</span></div>
+        <div class="comm-item"><span class="comm-time">28'</span><span class="comm-text">GOOOOOL DO BRASIL! ⚽ Vini Jr acerta uma pancada no ângulo esquerdo do goleiro Sam Jackson!</span></div>
+        <div class="comm-item"><span class="comm-time">19'</span><span class="comm-text">A bola passa pelo meio-campo (Zona Neutra). Bruno Guimarães domina com categoria.</span></div>
+        <div class="comm-item"><span class="comm-time">12'</span><span class="comm-text">Inglaterra pressionou na Defesa Brasileira, mas Marquinhos cortou de cabeça com segurança!</span></div>
+        <div class="comm-item"><span class="comm-time">01'</span><span class="comm-text">Apita o árbitro! Começa o grande clássico internacional!</span></div>
+      </div>
+
+      <!-- Controles de Simulação -->
+      <div style="display: flex; gap: 14px;">
+        <button class="btn-action-glow" style="background: linear-gradient(135deg, #eab308, #ca8a04); border-color: #fde047;" onclick="simulateNextMomentum()">
+          ⚡ SIMULAR PRÓXIMO LANCE (MOVER ATLETAS NA BARRA)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ========================================================
+       CONTROLE DE NAVEGAÇÃO ENTRE AS 3 TELAS
+    ======================================================== */
+    function switchView(viewName) {
+      document.querySelectorAll('.view-screen').forEach(v => v.classList.remove('active-view'));
+      document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+
+      document.getElementById('btn-go-lineup').style.display = 'none';
+      document.getElementById('btn-start-match').style.display = 'none';
+      document.getElementById('btn-back-team').style.display = 'none';
+
+      if (viewName === 'team') {
+        document.getElementById('view-team').classList.add('active-view');
+        document.getElementById('tab-team').classList.add('active');
+        document.getElementById('btn-go-lineup').style.display = 'flex';
+      } else if (viewName === 'lineup') {
+        document.getElementById('view-lineup').classList.add('active-view');
+        document.getElementById('tab-lineup').classList.add('active');
+        document.getElementById('btn-start-match').style.display = 'flex';
+      } else if (viewName === 'match') {
+        document.getElementById('view-match').classList.add('active-view');
+        document.getElementById('tab-match').classList.add('active');
+        document.getElementById('btn-back-team').style.display = 'flex';
+      }
+    }
+
+    /* ========================================================
+       LÓGICA DE SIMULAÇÃO DA BARRA DE PROGRESSO COM ATLETAS
+    ======================================================== */
+    const momentumStates = [
+      { pos: 15, zone: 'DEFESA', colorClass: 'status-def', text: '🛡️ ZONA DEFENSIVA: Alisson orienta a zaga enquanto a Inglaterra pressiona forte no nosso campo.', label: '🇧🇷 DEFESA RECUADA' },
+      { pos: 30, zone: 'DEFESA', colorClass: 'status-def', text: '🛡️ SAÍDA DE BOLA: Gabriel Magalhães toca com Danilo na lateral direita para escapar da marcação.', label: '🇧🇷 SAÍDA DE BOLA' },
+      { pos: 50, zone: 'NEUTRO', colorClass: 'status-mid', text: '⚖️ MEIO DE CAMPO: Disputa intensa pela posse de bola na região central. Bruno G. ganha a dividida!', label: '🇧🇷 MEIO-CAMPO (50%)' },
+      { pos: 65, zone: 'NEUTRO', colorClass: 'status-mid', text: '⚖️ TRANSIÇÃO RÁPIDA: Vini Jr acelera a transição ofensiva cruzando a linha divisória!', label: '🇧🇷 TRANSIÇÃO OFENSIVA' },
+      { pos: 82, zone: 'ATAQUE', colorClass: 'status-att', text: '⚡ ZONA DE PERIGO: Endrick avança com a bola no campo de ataque buscando o segundo gol!', label: '🇧🇷 BRASIL (ATAQUE 🔥)' },
+      { pos: 92, zone: 'ATAQUE', colorClass: 'status-att', text: '🚨 CHUTE PERIGOSO! Raphinha corta para dentro e dispara um foguete raspando a trave!', label: '🇧🇷 CHUTE AO GOL!' }
+    ];
+    let currentMomIndex = 4; // Começa em 82% (Ataque)
+    let liveMinutes = 34;
+
+    function simulateNextMomentum() {
+      currentMomIndex = (currentMomIndex + 1) % momentumStates.length;
+      liveMinutes += Math.floor(Math.random() * 6) + 3;
+      if (liveMinutes > 90) liveMinutes = 90;
+
+      const state = momentumStates[currentMomIndex];
+      const marker = document.getElementById('live-athlete');
+      const desc = document.getElementById('status-desc');
+      const timer = document.getElementById('match-timer');
+      const feed = document.getElementById('commentary-feed');
+
+      // Move a barra de atletas
+      marker.style.left = state.pos + '%';
+      document.getElementById('athlete-team-name').innerText = state.label;
+      timer.innerText = liveMinutes + "' MIN";
+
+      // Atualiza cores da zona
+      desc.className = 'status-badge-live ' + state.colorClass;
+      desc.innerText = state.text;
+      document.getElementById('current-zone-lbl').innerText = state.zone === 'ATAQUE' ? 'Ataque Pressionando 🔥' : (state.zone === 'NEUTRO' ? 'Meio de Campo ⚖️' : 'Defesa Segura 🛡️');
+
+      // Adiciona no feed
+      const newElem = document.createElement('div');
+      newElem.className = 'comm-item';
+      newElem.innerHTML = `<span class="comm-time">${liveMinutes}'</span><span class="comm-text">${state.text}</span>`;
+      feed.prepend(newElem);
+
+      if (liveMinutes === 90 && currentMomIndex === 5) {
+        document.getElementById('score-text').innerText = "2 x 0";
+        alert("🎉 GOOOOL FINAL DO BRASIL! Vitória por 2 a 0 consolidada!");
+      }
+    }
+
+    /* ========================================================
+       LÓGICA DO TEAM MANAGEMENT (SUBSTITUIÇÕES E FORMAÇÃO)
+    ======================================================== */
+    let selectedSlot = null;
+    const formacoes = ["4-5-1", "4-4-2", "4-3-3", "3-5-2"];
+    let formacaoIndex = 0;
+    const mentalities = ["Neutral", "Attacking", "Defensive", "All-Out"];
+    let mentalityIndex = 0;
+    const pressures = ["Normal", "High Press", "Low Block"];
+    let pressureIndex = 0;
+
+    function handleSlotClick(id, type) {
+      const elementId = type === 'campo' ? `slot-${id}` : `${type}-${id}`;
+      const elem = document.getElementById(elementId);
+
+      if (!selectedSlot) {
+        selectedSlot = { id, type, elem };
+        elem.classList.add(type === 'campo' ? 'selected-slot' : 'selected-sub');
+        document.getElementById('swap-notice').style.display = 'flex';
+        return;
+      }
+
+      if (selectedSlot.id === id && selectedSlot.type === type) {
+        elem.classList.remove('selected-slot', 'selected-sub');
+        selectedSlot = null;
+        document.getElementById('swap-notice').style.display = 'none';
+        return;
+      }
+
+      swapPlayerData(selectedSlot.elem, elem);
+      selectedSlot.elem.classList.remove('selected-slot', 'selected-sub');
+      elem.classList.remove('selected-slot', 'selected-sub');
+      selectedSlot = null;
+      document.getElementById('swap-notice').style.display = 'none';
+    }
+
+    function swapPlayerData(elemA, elemB) {
+      const posA = elemA.querySelector('.pos-badge').innerText;
+      const posClassA = elemA.querySelector('.pos-badge').className;
+      const ovrA = elemA.querySelector('.ovr-number').innerText;
+      const nameA = elemA.querySelector('.player-label').innerText;
+
+      const posB = elemB.querySelector('.pos-badge').innerText;
+      const posClassB = elemB.querySelector('.pos-badge').className;
+      const ovrB = elemB.querySelector('.ovr-number').innerText;
+      const nameB = elemB.querySelector('.player-label').innerText;
+
+      elemA.querySelector('.pos-badge').innerText = posB;
+      elemA.querySelector('.pos-badge').className = posClassB;
+      elemA.querySelector('.ovr-number').innerText = ovrB;
+      elemA.querySelector('.player-label').innerText = nameB;
+
+      elemB.querySelector('.pos-badge').innerText = posA;
+      elemB.querySelector('.pos-badge').className = posClassA;
+      elemB.querySelector('.ovr-number').innerText = ovrA;
+      elemB.querySelector('.player-label').innerText = nameA;
+
+      elemA.style.transform = "scale(1.25)";
+      elemB.style.transform = "scale(1.25)";
+      setTimeout(() => { elemA.style.transform = ""; elemB.style.transform = ""; }, 300);
+    }
+
+    function changeFormation(dir) {
+      formacaoIndex = (formacaoIndex + dir + formacoes.length) % formacoes.length;
+      document.getElementById('val-formation').innerText = formacoes[formacaoIndex];
+      document.getElementById('lineup-formation-br').innerText = formacoes[formacaoIndex];
+
+      const pitchSlots = document.querySelectorAll('.player-slot');
+      pitchSlots.forEach(slot => { slot.style.transition = "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)"; });
+
+      if (formacoes[formacaoIndex] === "4-4-2") {
+        document.getElementById('slot-0').style.top = "16%"; document.getElementById('slot-0').style.left = "36%";
+        document.getElementById('slot-1').style.top = "16%"; document.getElementById('slot-1').style.left = "64%";
+        document.getElementById('slot-2').style.top = "42%"; document.getElementById('slot-2').style.left = "30%";
+        document.getElementById('slot-3').style.top = "42%"; document.getElementById('slot-3').style.left = "70%";
+      } else if (formacoes[formacaoIndex] === "4-3-3") {
+        document.getElementById('slot-0').style.top = "15%"; document.getElementById('slot-0').style.left = "50%";
+        document.getElementById('slot-1').style.top = "20%"; document.getElementById('slot-1').style.left = "22%";
+        document.getElementById('slot-2').style.top = "20%"; document.getElementById('slot-2').style.left = "78%";
+        document.getElementById('slot-3').style.top = "46%"; document.getElementById('slot-3').style.left = "35%";
+      } else {
+        document.getElementById('slot-0').style.top = "14%"; document.getElementById('slot-0').style.left = "50%";
+        document.getElementById('slot-1').style.top = "30%"; document.getElementById('slot-1').style.left = "32%";
+        document.getElementById('slot-2').style.top = "30%"; document.getElementById('slot-2').style.left = "68%";
+        document.getElementById('slot-3').style.top = "42%"; document.getElementById('slot-3').style.left = "14%";
+      }
+    }
+
+    function toggleMentality() {
+      mentalityIndex = (mentalityIndex + 1) % mentalities.length;
+      document.getElementById('val-mentality').innerText = mentalities[mentalityIndex];
+    }
+
+    function togglePressure() {
+      pressureIndex = (pressureIndex + 1) % pressures.length;
+      document.getElementById('val-pressure').innerText = pressures[pressureIndex];
+    }
+  </script>
+</body>
+</html>
