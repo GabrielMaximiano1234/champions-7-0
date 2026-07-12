@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Champions 7-0 - Soccer Champs Arcade Matchflow & Team Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark-navy: #091128;
+      --bg-header-white: #ffffff;
+      --bg-subheader-black: #0d131f;
+      --pitch-grass: #166534;
+      --pitch-border: #4ade80;
+      --card-white: #ffffff;
+      --card-blue-border: #2563eb;
+      --card-ovr-color: #1e40af;
+      --pos-badge-green: #22c55e;
+      --pos-badge-yellow: #eab308;
+      --panel-gray: #cbd5e1;
+      --panel-header-gray: #475569;
+      --zone-def: #3b82f6;
+      --zone-mid: #eab308;
+      --zone-att: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-dark-navy);
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ========================================================
+       HEADER SUPERIOR E SUB-HEADER NAVEGAÇÃO
+    ======================================================== */
+    .top-navbar {
+      background-color: var(--bg-header-white);
+      color: #1e293b;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      z-index: 50;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-menu {
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      color: #334155;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .team-badge-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2.5px solid #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+    }
+
+    .team-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: #1d4ed8;
+      margin: 0;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
+
+    .btn-action-glow {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+      color: #fff;
+      border: 2px solid #4ade80;
+      padding: 9px 22px;
+      border-radius: 30px;
+      font-weight: 900;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(34, 197, 94, 0.6);
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-action-glow:hover {
+      transform: scale(1.06) translateY(-2px);
+      box-shadow: 0 0 25px rgba(34, 197, 94, 0.9);
+    }
+
+    .btn-action-red {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+      border-color: #f87171 !important;
+      box-shadow: 0 0 18px rgba(239, 68, 68, 0.6) !important;
+    }
+
+    .btn-action-blue {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+      border-color: #60a5fa !important;
+      box-shadow: 0 0 18px rgba(59, 130, 246, 0.6) !important;
+    }
+
+    .sub-navbar {
+      background-color: var(--bg-subheader-black);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 2px solid rgba(255,255,255,0.08);
+    }
+
+    .tabs-group {
+      display: flex;
+      gap: 8px;
+      background-color: #1e293b;
+      padding: 4px;
+      border-radius: 25px;
+      border: 1px solid #334155;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.25s;
+      letter-spacing: 0.5px;
+    }
+
+    .tab-btn.active {
+      background-color: #ffffff;
+      color: #1d4ed8;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      font-weight: 900;
+    }
+
+    .resources-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .res-pill {
+      background-color: #1e293b;
+      border: 1.5px solid #334155;
+      border-radius: 18px;
+      padding: 4px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    /* ========================================================
+       SISTEMA DE VIEWS SPA
+    ======================================================== */
+    .view-screen {
+      display: none;
+      flex: 1;
+    }
+
+    .view-screen.active-view {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ========================================================
+       VIEW 1: TEAM MANAGEMENT (PITCH 3D COM AVATARES SOCCER CHAMPS)
+    ======================================================== */
+    .main-workspace {
+      flex: 1;
+      background: radial-gradient(circle at 30% 50%, #11224f 0%, #081026 100%);
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.015) 0px,
+        rgba(255, 255, 255, 0.015) 2px,
+        transparent 2px,
+        transparent 16px
+      );
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    @media (min-width: 1024px) {
+      .main-workspace {
+        grid-template-columns: 1fr 390px;
+        padding: 28px 36px;
+      }
+    }
+
+    .pitch-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .pitch-perspective-box {
+      width: 100%;
+      aspect-ratio: 16 / 10.5;
+      perspective: 1300px;
+      position: relative;
+    }
+
+    .pitch-surface {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #166534 0%, #15803d 50%, #16a34a 100%);
+      border: 6px solid #22c55e;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), inset 0 0 60px rgba(0, 0, 0, 0.4);
+      position: relative;
+      transform: rotateX(24deg) scale(0.96);
+      transform-style: preserve-3d;
+      overflow: hidden;
+      background-image: repeating-linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.09) 0px,
+        rgba(0, 0, 0, 0.09) 36px,
+        transparent 36px,
+        transparent 72px
+      );
+    }
+
+    .line-half { position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.6); transform: translateY(-50%); }
+    .line-circle { position: absolute; top: 50%; left: 50%; width: 120px; height: 120px; border: 3px solid rgba(255,255,255,0.6); border-radius: 50%; transform: translate(-50%, -50%); }
+    .line-box-top { position: absolute; top: 0; left: 26%; right: 26%; height: 24%; border: 3px solid rgba(255,255,255,0.6); border-top: none; }
+    .line-box-bottom { position: absolute; bottom: 0; left: 26%; right: 26%; height: 24%; border: 3px solid rgba(255,255,255,0.6); border-bottom: none; }
+
+    .player-slot {
+      position: absolute;
+      transform: translate(-50%, -50%) rotateX(-24deg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .player-slot:hover { transform: translate(-50%, -58%) rotateX(-24deg) scale(1.15); z-index: 30; }
+    .player-slot.selected-slot .ovr-circle { border-color: #ffd700 !important; box-shadow: 0 0 22px #ffd700, inset 0 0 10px #ffd700 !important; animation: pulse-select 1s infinite alternate; }
+
+    @keyframes pulse-select { 0% { transform: scale(1.04); } 100% { transform: scale(1.2); } }
+
+    .pos-badge { background-color: var(--pos-badge-green); color: #fff; font-size: 0.65rem; font-weight: 900; padding: 2px 8px; border-radius: 8px 8px 0 0; border: 1px solid #15803d; border-bottom: none; text-transform: uppercase; z-index: 2; box-shadow: 0 -2px 4px rgba(0,0,0,0.3); }
+    .pos-gk-badge { background-color: #eab308; color: #000; border-color: #ca8a04; }
+    .pos-cf-badge { background-color: #3b82f6; color: #fff; border-color: #1d4ed8; }
+    .pos-am-badge { background-color: #10b981; color: #fff; border-color: #047857; }
+
+    .ovr-circle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%); border: 3px solid var(--card-blue-border); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); position: relative; margin-top: -2px; }
+    .ovr-number { font-size: 1.15rem; font-weight: 900; color: var(--card-ovr-color); line-height: 1; font-family: 'Outfit', sans-serif; }
+    .ovr-captain { position: absolute; left: -5px; top: 6px; background-color: #ffd700; color: #000; font-size: 0.6rem; font-weight: 900; padding: 1px 4px; border-radius: 4px; border: 1.5px solid #b8860b; }
+    .player-label { font-size: 0.8rem; font-weight: 800; color: #ffffff; text-shadow: 0 2px 4px #000000; margin-top: 4px; white-space: nowrap; background: rgba(0,0,0,0.6); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); }
+
+    .tactical-footer-bar { width: 100%; display: flex; align-items: center; justify-content: space-between; margin-top: -12px; z-index: 20; gap: 14px; }
+    .tactic-btn { background: linear-gradient(180deg, #64748b 0%, #334155 100%); border: 2px solid #94a3b8; border-radius: 22px; padding: 8px 22px; display: flex; flex-direction: column; align-items: center; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.5); min-width: 130px; }
+    .tactic-label { font-size: 0.68rem; color: #e2e8f0; font-weight: 800; text-transform: uppercase; }
+    .tactic-value { font-size: 0.95rem; color: #ffffff; font-weight: 900; font-family: 'Outfit', sans-serif; }
+
+    .formation-selector { background: linear-gradient(180deg, #334155 0%, #1e293b 100%); border: 2.5px solid #64748b; border-radius: 28px; padding: 6px 16px; display: flex; align-items: center; gap: 16px; box-shadow: 0 6px 15px rgba(0,0,0,0.6); }
+    .arrow-btn { width: 30px; height: 30px; border-radius: 50%; background-color: #2563eb; color: #fff; border: none; font-weight: 900; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .formation-text { font-size: 1.2rem; font-weight: 900; color: #fff; min-width: 60px; text-align: center; font-family: 'Outfit', sans-serif; }
+
+    .subs-res-wrapper { width: 100%; background-color: var(--panel-gray); border-radius: 16px; border: 3px solid #94a3b8; box-shadow: 0 20px 40px rgba(0,0,0,0.7); overflow: hidden; display: flex; flex-direction: column; }
+    .panel-headers-row { display: grid; grid-template-columns: 1fr 100px; background-color: var(--panel-header-gray); color: #ffffff; font-size: 0.85rem; font-weight: 900; border-bottom: 3px solid #334155; font-family: 'Outfit', sans-serif; letter-spacing: 0.5px; }
+    .header-subs { padding: 10px 14px; border-right: 3px solid #334155; }
+    .header-res { padding: 10px 14px; text-align: center; }
+    .panel-grids-row { display: grid; grid-template-columns: 1fr 100px; background-color: #f1f5f9; padding: 14px 10px; max-height: 470px; overflow-y: auto; gap: 8px; }
+    .grid-subs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 8px; border-right: 2.5px solid #cbd5e1; padding-right: 10px; }
+    .grid-res { display: grid; grid-template-columns: 1fr; gap: 14px; padding-left: 6px; align-content: flex-start; }
+
+    .mini-card { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.2s; }
+    .mini-card:hover { transform: scale(1.1); }
+    .mini-card.selected-sub .ovr-circle { border-color: #ffd700 !important; box-shadow: 0 0 16px #ffd700 !important; animation: pulse-select 1s infinite alternate; }
+    .mini-card .pos-badge { font-size: 0.58rem; padding: 1px 6px; }
+    .mini-card .ovr-circle { width: 42px; height: 42px; border-width: 2.5px; }
+    .mini-card .ovr-number { font-size: 0.95rem; }
+    .mini-card .player-label { font-size: 0.7rem; color: #1e293b; text-shadow: none; font-weight: 800; background: none; margin-top: 3px; border: none; }
+
+    /* ========================================================
+       VIEW 2: SOCCER CHAMPS LINEUP PREVIEW (CARTOON VECTORS!)
+    ======================================================== */
+    .lineup-screen-container {
+      flex: 1;
+      background: radial-gradient(circle at 50% 30%, #162456 0%, #080f26 100%);
+      background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.03) 0px,
+        rgba(255, 255, 255, 0.03) 4px,
+        transparent 4px,
+        transparent 24px
+      );
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .matchup-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 24px;
+      width: 100%;
+      max-width: 900px;
+      background: rgba(13, 22, 51, 0.9);
+      border: 3px solid #3b82f6;
+      border-radius: 20px;
+      padding: 16px 24px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+    }
+
+    .team-lineup-title { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; letter-spacing: 1px; color: #fff; display: flex; flex-direction: column; }
+    .team-lineup-sub { font-size: 0.8rem; color: #94a3b8; font-weight: 800; font-family: 'Inter', sans-serif; }
+    .matchup-circle-vs { display: flex; align-items: center; gap: 16px; }
+    .flag-circle-big { width: 62px; height: 62px; border-radius: 50%; background: #fff; border: 3px solid #60a5fa; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 6px 20px rgba(0,0,0,0.6); }
+
+    .lineup-table { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 10px; }
+
+    .lineup-row {
+      display: grid;
+      grid-template-columns: 1fr 45px 45px 1fr;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 8px 16px;
+      transition: all 0.25s;
+    }
+
+    .lineup-row:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: #60a5fa;
+      transform: scale(1.015);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    }
+
+    .player-left { display: flex; align-items: center; justify-content: flex-end; gap: 14px; text-align: right; }
+    .player-right { display: flex; align-items: center; justify-content: flex-start; gap: 14px; text-align: left; }
+    .ovr-tag { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.2rem; color: #ffffff; min-width: 35px; }
+    .stars-box { color: #ffd700; font-size: 0.8rem; letter-spacing: -1.5px; }
+    .player-name-text { font-weight: 800; font-size: 1.05rem; color: #f8fafc; flex: 1; }
+    .shirt-num { font-size: 0.9rem; font-weight: 900; color: #94a3b8; width: 28px; text-align: center; }
+
+    /* ========================================================
+       SOCCER CHAMPS 2D CARTOON AVATARS (SVG RETRO ARCADE STYLE)
+    ======================================================== */
+    .sc-cartoon-avatar {
+      width: 44px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .lineup-row:hover .sc-cartoon-avatar {
+      transform: scale(1.25) translateY(-2px);
+    }
+
+    /* ========================================================
+       VIEW 3: LIVE MATCH SIMULATION & MOMENTUM BAR
+    ======================================================== */
+    .match-simulation-container {
+      flex: 1;
+      background: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 26px;
+    }
+
+    .match-scoreboard {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border: 3px solid #3b82f6;
+      border-radius: 24px;
+      padding: 16px 44px;
+      display: flex;
+      align-items: center;
+      gap: 46px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.8);
+    }
+
+    .score-team { display: flex; align-items: center; gap: 14px; font-size: 1.4rem; font-weight: 900; font-family: 'Outfit', sans-serif; }
+    .score-numbers { font-size: 3.2rem; font-weight: 900; color: #ffd700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.6); font-family: 'Outfit', sans-serif; }
+    .score-timer { background: #ef4444; color: #fff; font-size: 0.9rem; font-weight: 900; padding: 6px 14px; border-radius: 14px; animation: pulse-timer 1s infinite; letter-spacing: 1px; }
+
+    @keyframes pulse-timer { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
+    /* STAGE 2D CARTOON DO JOGO (ONDE OS PERSONAGENS JOGAM E CHUTAM A BOLA) */
+    .soccer-champs-live-stage {
+      width: 100%;
+      max-width: 900px;
+      height: 240px;
+      background: linear-gradient(180deg, #166534 0%, #15803d 50%, #16a34a 100%);
+      border: 4px solid #4ade80;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.7), inset 0 0 50px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.08) 0px,
+        rgba(0, 0, 0, 0.08) 60px,
+        transparent 60px,
+        transparent 120px
+      );
+    }
+
+    .stage-center-circle {
+      width: 160px;
+      height: 160px;
+      border: 3px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      position: absolute;
+    }
+
+    .stage-center-line {
+      width: 3px;
+      height: 100%;
+      background: rgba(255,255,255,0.4);
+      position: absolute;
+    }
+
+    /* PERSONAGENS EM AÇÃO NO GRAMADO LIVE */
+    .stage-character {
+      position: absolute;
+      transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .stage-ball {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 15;
+      filter: drop-shadow(0 8px 6px rgba(0,0,0,0.5));
+    }
+
+    .stage-player-name {
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-top: 6px;
+      border: 1px solid #e2e8f0;
+      white-space: nowrap;
+    }
+
+    /* BARRA DE PROGRESSÃO E TERRITÓRIO */
+    .territory-box {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 2.5px solid #475569;
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .territory-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; font-weight: 800; color: #e2e8f0; text-transform: uppercase; font-family: 'Outfit', sans-serif; letter-spacing: 0.5px; }
+    .zone-labels { display: flex; justify-content: space-between; width: 100%; font-size: 0.78rem; font-weight: 900; }
+    .lbl-def { color: #60a5fa; }
+    .lbl-mid { color: #facc15; }
+    .lbl-att { color: #f87171; }
+
+    .momentum-track {
+      width: 100%;
+      height: 56px;
+      background: linear-gradient(90deg, 
+        rgba(59, 130, 246, 0.35) 0%, rgba(59, 130, 246, 0.35) 33.3%, 
+        rgba(234, 179, 8, 0.35) 33.3%, rgba(234, 179, 8, 0.35) 66.6%, 
+        rgba(239, 68, 68, 0.35) 66.6%, rgba(239, 68, 68, 0.35) 100%);
+      border: 3.5px solid #64748b;
+      border-radius: 30px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      box-shadow: inset 0 6px 14px rgba(0,0,0,0.7);
+    }
+
+    .momentum-divider { position: absolute; top: 0; bottom: 0; width: 3px; background: rgba(255,255,255,0.5); border-right: 1px dashed rgba(0,0,0,0.6); }
+
+    .athlete-marker {
+      position: absolute;
+      left: 80%;
+      transform: translateX(-50%);
+      transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      color: #0f172a;
+      font-weight: 900;
+      font-size: 0.95rem;
+      padding: 6px 18px;
+      border-radius: 25px;
+      border: 3.5px solid #2563eb;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.7);
+      z-index: 5;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .status-badge-live {
+      text-align: center;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.3px;
+      transition: all 0.3s;
+    }
+
+    .status-def { background: rgba(59, 130, 246, 0.2); border: 1.5px solid #3b82f6; color: #93c5fd; }
+    .status-mid { background: rgba(234, 179, 8, 0.2); border: 1.5px solid #eab308; color: #fde047; }
+    .status-att { background: rgba(239, 68, 68, 0.2); border: 1.5px solid #ef4444; color: #fca5a5; }
+
+    .commentary-feed {
+      width: 100%;
+      max-width: 900px;
+      background: #0d131f;
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .comm-item { display: flex; gap: 14px; align-items: flex-start; font-size: 0.95rem; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px; }
+    .comm-time { font-weight: 900; color: #ffd700; min-width: 42px; font-family: 'Outfit', sans-serif; }
+    .comm-text { color: #e2e8f0; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <!-- Alerta Superior de Troca de Jogador -->
+  <div id="swap-notice" style="position: fixed; top: 72px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #ffd700, #eab308); color: #000; font-weight: 900; padding: 12px 28px; border-radius: 30px; box-shadow: 0 12px 30px rgba(0,0,0,0.6); z-index: 100; display: none; align-items: center; gap: 12px; font-family: 'Outfit', sans-serif;">
+    <span>✨ Jogador selecionado! Agora clique em outro jogador no gramado ou banco para substituir.</span>
+  </div>
+
+  <!-- 1. HEADER SUPERIOR -->
+  <header class="top-navbar">
+    <div class="nav-left">
+      <button class="btn-menu">☰</button>
+      <div class="team-badge-circle">🇧🇷</div>
+      <h1 class="team-title">Seleção Brasileira</h1>
+    </div>
+    
+    <!-- Botões de Ação Dinâmicos por Tela -->
+    <div style="display: flex; gap: 12px;">
+      <button class="btn-action-glow btn-action-blue" id="btn-go-lineup" onclick="switchView('lineup')">
+        ⚽ ESCALAÇÃO VS (SOCCER CHAMPS PREVIEW)
+      </button>
+      <button class="btn-action-glow btn-action-red" id="btn-start-match" style="display: none;" onclick="switchView('match')">
+        ▶️ INICIAR PARTIDA (ESTÁDIO CARTOON & MOMENTUM)
+      </button>
+      <button class="btn-action-glow btn-action-blue" id="btn-back-team" style="display: none;" onclick="switchView('team')">
+        ⚙️ VOLTAR AO TEAM MANAGEMENT
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. SUB-HEADER BARRA PRETA -->
+  <nav class="sub-navbar">
+    <div class="tabs-group">
+      <button class="tab-btn active" id="tab-team" onclick="switchView('team')">MY TEAM</button>
+      <button class="tab-btn" id="tab-lineup" onclick="switchView('lineup')">LINEUP VS (CARTOON 2D)</button>
+      <button class="tab-btn" id="tab-match" onclick="switchView('match')">MATCH LIVE & MOMENTUM BAR</button>
+    </div>
+    <div class="resources-group">
+      <div class="res-pill"><span class="res-icon">⚡</span> 16</div>
+      <div class="res-pill"><span class="res-icon">💼</span> 6</div>
+      <div class="res-pill" style="color: #ffd700;"><span class="res-icon">🪙</span> 159</div>
+    </div>
+  </nav>
+
+  <!-- ========================================================
+       VIEW 1: TEAM MANAGEMENT (GRAMADO 3D)
+  ======================================================== -->
+  <div class="view-screen active-view" id="view-team">
+    <main class="main-workspace">
+      <!-- Gramado em Perspectiva 3D -->
+      <div class="pitch-wrapper">
+        <div class="pitch-perspective-box">
+          <div class="pitch-surface">
+            <div class="line-half"></div>
+            <div class="line-circle"></div>
+            <div class="line-box-top"></div>
+            <div class="line-box-bottom"></div>
+
+            <div class="player-slot" style="top: 14%; left: 50%;" id="slot-0" onclick="handleSlotClick(0, 'campo')">
+              <span class="pos-badge pos-cf-badge">CF</span>
+              <div class="ovr-circle"><span class="ovr-captain">C</span><span class="ovr-number">88</span></div>
+              <span class="player-label">Endrick</span>
+            </div>
+            <div class="player-slot" style="top: 30%; left: 32%;" id="slot-1" onclick="handleSlotClick(1, 'campo')">
+              <span class="pos-badge pos-am-badge">AM</span>
+              <div class="ovr-circle"><span class="ovr-number">85</span></div>
+              <span class="player-label">Vini Jr</span>
+            </div>
+            <div class="player-slot" style="top: 30%; left: 68%;" id="slot-2" onclick="handleSlotClick(2, 'campo')">
+              <span class="pos-badge pos-am-badge">AM</span>
+              <div class="ovr-circle"><span class="ovr-number">83</span></div>
+              <span class="player-label">Rodrygo</span>
+            </div>
+            <div class="player-slot" style="top: 42%; left: 14%;" id="slot-3" onclick="handleSlotClick(3, 'campo')">
+              <span class="pos-badge">LW</span>
+              <div class="ovr-circle"><span class="ovr-number">85</span></div>
+              <span class="player-label">Martinelli</span>
+            </div>
+            <div class="player-slot" style="top: 42%; left: 86%;" id="slot-4" onclick="handleSlotClick(4, 'campo')">
+              <span class="pos-badge">RW</span>
+              <div class="ovr-circle"><span class="ovr-number">85</span></div>
+              <span class="player-label">Raphinha</span>
+            </div>
+            <div class="player-slot" style="top: 54%; left: 50%;" id="slot-5" onclick="handleSlotClick(5, 'campo')">
+              <span class="pos-badge">DM</span>
+              <div class="ovr-circle"><span class="ovr-number">83</span></div>
+              <span class="player-label">Bruno G.</span>
+            </div>
+            <div class="player-slot" style="top: 68%; left: 18%;" id="slot-6" onclick="handleSlotClick(6, 'campo')">
+              <span class="pos-badge pos-yellow">LB</span>
+              <div class="ovr-circle"><span class="ovr-number">81</span></div>
+              <span class="player-label">Arana</span>
+            </div>
+            <div class="player-slot" style="top: 74%; left: 38%;" id="slot-7" onclick="handleSlotClick(7, 'campo')">
+              <span class="pos-badge">CB</span>
+              <div class="ovr-circle"><span class="ovr-number">83</span></div>
+              <span class="player-label">Gabriel M.</span>
+            </div>
+            <div class="player-slot" style="top: 74%; left: 62%;" id="slot-8" onclick="handleSlotClick(8, 'campo')">
+              <span class="pos-badge">CB</span>
+              <div class="ovr-circle"><span class="ovr-number">84</span></div>
+              <span class="player-label">Marquinhos</span>
+            </div>
+            <div class="player-slot" style="top: 68%; left: 82%;" id="slot-9" onclick="handleSlotClick(9, 'campo')">
+              <span class="pos-badge">RB</span>
+              <div class="ovr-circle"><span class="ovr-number">84</span></div>
+              <span class="player-label">Danilo</span>
+            </div>
+            <div class="player-slot" style="top: 88%; left: 50%;" id="slot-10" onclick="handleSlotClick(10, 'campo')">
+              <span class="pos-badge pos-gk-badge">GK</span>
+              <div class="ovr-circle"><span class="ovr-number">84</span></div>
+              <span class="player-label">Alisson</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra Inferior Tática -->
+        <div class="tactical-footer-bar">
+          <div class="tactic-btn" onclick="toggleMentality()">
+            <span class="tactic-label">Mentality</span>
+            <span class="tactic-value" id="val-mentality">Neutral</span>
+          </div>
+          <div class="formation-selector">
+            <button class="arrow-btn" onclick="changeFormation(-1)">&lt;</button>
+            <span class="formation-text" id="val-formation">4-5-1</span>
+            <button class="arrow-btn" onclick="changeFormation(1)">&gt;</button>
+          </div>
+          <div class="tactic-btn" onclick="togglePressure()">
+            <span class="tactic-label">Pressure</span>
+            <span class="tactic-value" id="val-pressure">Normal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Painel Cinza de Reservas -->
+      <aside class="subs-res-wrapper">
+        <div class="panel-headers-row">
+          <div class="header-subs">SUBSTITUTES</div>
+          <div class="header-res">RES</div>
+        </div>
+        <div class="panel-grids-row">
+          <div class="grid-subs">
+            <div class="mini-card" id="sub-0" onclick="handleSlotClick(0, 'sub')"><span class="pos-badge pos-gk-badge">GK</span><div class="ovr-circle"><span class="ovr-number">82</span></div><span class="player-label">Ederson</span></div>
+            <div class="mini-card" id="sub-1" onclick="handleSlotClick(1, 'sub')"><span class="pos-badge">LW</span><div class="ovr-circle"><span class="ovr-number">82</span></div><span class="player-label">Savinho</span></div>
+            <div class="mini-card" id="sub-2" onclick="handleSlotClick(2, 'sub')"><span class="pos-badge pos-cf-badge">CF</span><div class="ovr-circle"><span class="ovr-number">81</span></div><span class="player-label">Pedro</span></div>
+            <div class="mini-card" id="sub-3" onclick="handleSlotClick(3, 'sub')"><span class="pos-badge pos-am-badge">AM</span><div class="ovr-circle"><span class="ovr-number">80</span></div><span class="player-label">Paquetá</span></div>
+            <div class="mini-card" id="sub-4" onclick="handleSlotClick(4, 'sub')"><span class="pos-badge pos-am-badge">AM</span><div class="ovr-circle"><span class="ovr-number">81</span></div><span class="player-label">Andreas</span></div>
+            <div class="mini-card" id="sub-5" onclick="handleSlotClick(5, 'sub')"><span class="pos-badge pos-am-badge">AM</span><div class="ovr-circle"><span class="ovr-number">81</span></div><span class="player-label">Gerson</span></div>
+            <div class="mini-card" id="sub-6" onclick="handleSlotClick(6, 'sub')"><span class="pos-badge">CB</span><div class="ovr-circle"><span class="ovr-number">83</span></div><span class="player-label">Militão</span></div>
+            <div class="mini-card" id="sub-7" onclick="handleSlotClick(7, 'sub')"><span class="pos-badge">LW</span><div class="ovr-circle"><span class="ovr-number">84</span></div><span class="player-label">Neymar Jr</span></div>
+            <div class="mini-card" id="sub-8" onclick="handleSlotClick(8, 'sub')"><span class="pos-badge">LW</span><div class="ovr-circle"><span class="ovr-number">84</span></div><span class="player-label">Estevão</span></div>
+          </div>
+          <div class="grid-res">
+            <div class="mini-card" id="res-0" onclick="handleSlotClick(0, 'res')"><span class="pos-badge">RB</span><div class="ovr-circle"><span class="ovr-number">81</span></div><span class="player-label">Yan Couto</span></div>
+            <div class="mini-card" id="res-1" onclick="handleSlotClick(1, 'res')"><span class="pos-badge">RB</span><div class="ovr-circle"><span class="ovr-number">84</span></div><span class="player-label">Arthur</span></div>
+            <div class="mini-card" id="res-2" onclick="handleSlotClick(2, 'res')"><span class="pos-badge">RB</span><div class="ovr-circle"><span class="ovr-number">84</span></div><span class="player-label">Vanderson</span></div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- ========================================================
+       VIEW 2: SOCCER CHAMPS LINEUP PREVIEW (CARTOON VECTORS!)
+  ======================================================== -->
+  <div class="view-screen" id="view-lineup">
+    <div class="lineup-screen-container">
+      
+      <!-- Banner Superior de Confronto -->
+      <div class="matchup-banner">
+        <div class="team-lineup-title" style="text-align: right;">
+          <span>BRAZIL</span>
+          <span class="team-lineup-sub" id="lineup-formation-br">4-5-1</span>
+        </div>
+        <div class="matchup-circle-vs">
+          <div class="flag-circle-big">🇧🇷</div>
+          <span style="font-size: 1.6rem; font-weight: 900; color: #60a5fa; font-family: 'Outfit', sans-serif;">VS</span>
+          <div class="flag-circle-big">🏴󠁧󠁢󠁥󠁮󠁧󠁿</div>
+        </div>
+        <div class="team-lineup-title" style="text-align: left;">
+          <span>ENGLAND</span>
+          <span class="team-lineup-sub">3-4-3</span>
+        </div>
+      </div>
+
+      <!-- Tabela 11 vs 11 no Estilo CARTOON VETORIAL SOCCER CHAMPS -->
+      <div class="lineup-table">
+        <!-- 1. Goleiros -->
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">89</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Alisson (C)</span>
+            <div class="sc-cartoon-avatar">
+              <!-- Goleiro Brasil -->
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fbcfe8"/>
+                <path d="M18 18 Q32 4 46 18 Q46 10 32 8 Q18 10 18 18" fill="#451a03"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <circle cx="24" cy="26" r="3" fill="#f87171"/>
+                <path d="M28 29 Q32 34 36 29" stroke="#451a03" stroke-width="2.5" fill="none"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#eab308" stroke="#1e293b" stroke-width="2"/>
+              </svg>
+            </div>
+          </div>
+          <div class="shirt-num">1</div>
+          <div class="shirt-num">13</div>
+          <div class="player-right">
+            <div class="sc-cartoon-avatar">
+              <!-- Goleiro Inglaterra -->
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fed7aa"/>
+                <path d="M20 16 Q32 6 44 16 Q40 12 32 12 Q24 12 20 16" fill="#ca8a04"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#16a34a" stroke="#1e293b" stroke-width="2"/>
+              </svg>
+            </div>
+            <span class="player-name-text">Sam Jackson</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">82</span>
+          </div>
+        </div>
+
+        <!-- 2. Defesa -->
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">84</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Danilo</span>
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fba17b"/>
+                <path d="M18 18 Q32 8 46 18 Z" fill="#1e293b"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#facc15" stroke="#16a34a" stroke-width="2.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="shirt-num">2</div>
+          <div class="shirt-num">6</div>
+          <div class="player-right">
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fbcfe8"/>
+                <path d="M18 20 Q32 4 46 20 Z" fill="#451a03"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 34 36 29" stroke="#451a03" stroke-width="2.5" fill="none"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="player-name-text">Rocky Burgess</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">83</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">84</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Marquinhos</span>
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fed7aa"/>
+                <path d="M20 18 Q32 6 44 18 Q32 10 20 18" fill="#451a03"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <circle cx="24" cy="26" r="3" fill="#f87171"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#facc15" stroke="#16a34a" stroke-width="2.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="shirt-num">4</div>
+          <div class="shirt-num">18</div>
+          <div class="player-right">
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fba17b"/>
+                <path d="M18 16 Q32 6 46 16 Z" fill="#1e293b"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="player-name-text">Rio Davies</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">84</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">83</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Gabriel M.</span>
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fba17b"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M20 28 Q32 38 44 28 L42 36 Q32 40 22 36 Z" fill="#1e293b"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#facc15" stroke="#16a34a" stroke-width="2.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="shirt-num">3</div>
+          <div class="shirt-num">21</div>
+          <div class="player-right">
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fbcfe8"/>
+                <path d="M18 16 Q32 2 46 16 Z" fill="#ca8a04"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <circle cx="24" cy="26" r="3" fill="#f87171"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="player-name-text">Steven Beames</span><span class="stars-box">⭐⭐⭐⭐⭐</span><span class="ovr-tag">87</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">81</span><span class="stars-box">⭐⭐⭐</span><span class="player-name-text">Arana</span>
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fed7aa"/>
+                <path d="M18 18 Q32 8 46 18 Q32 12 18 18" fill="#451a03"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#facc15" stroke="#16a34a" stroke-width="2.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="shirt-num">6</div>
+          <div class="shirt-num">4</div>
+          <div class="player-right">
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fed7aa"/>
+                <path d="M20 16 Q32 6 44 16 Z" fill="#451a03"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 34 36 29" stroke="#451a03" stroke-width="2.5" fill="none"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="player-name-text">Westley Scott</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">84</span>
+          </div>
+        </div>
+
+        <!-- 3. Meio Campo -->
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">83</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Bruno G.</span>
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fed7aa"/>
+                <path d="M18 16 Q32 6 46 16 Z" fill="#451a03"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <circle cx="24" cy="26" r="3" fill="#f87171"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#facc15" stroke="#16a34a" stroke-width="2.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="shirt-num">5</div>
+          <div class="shirt-num">5</div>
+          <div class="player-right">
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fbcfe8"/>
+                <path d="M18 16 Q32 6 46 16 Z" fill="#ca8a04"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="player-name-text">Kevin Evans</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">84</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">85</span><span class="stars-box">⭐⭐⭐⭐⭐</span><span class="player-name-text">Vini Jr</span>
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fba17b"/>
+                <path d="M16 16 Q32 4 48 16 Q44 10 32 10 Q20 10 16 16" fill="#1e293b"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 34 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#facc15" stroke="#16a34a" stroke-width="2.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="shirt-num">7</div>
+          <div class="shirt-num">19</div>
+          <div class="player-right">
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fed7aa"/>
+                <path d="M18 16 Q32 6 46 16 Z" fill="#451a03"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <circle cx="24" cy="26" r="3" fill="#f87171"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="player-name-text">Josh Hancock</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">85</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">83</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Rodrygo</span>
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fba17b"/>
+                <path d="M18 16 Q32 8 46 16 Z" fill="#1e293b"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#facc15" stroke="#16a34a" stroke-width="2.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="shirt-num">10</div>
+          <div class="shirt-num">7</div>
+          <div class="player-right">
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fbcfe8"/>
+                <path d="M18 16 Q32 6 46 16 Z" fill="#ca8a04"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="player-name-text">Jonathan Minors</span><span class="stars-box">⭐⭐⭐</span><span class="ovr-tag">82</span>
+          </div>
+        </div>
+
+        <!-- 4. Ataque -->
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">85</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Raphinha</span>
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fed7aa"/>
+                <path d="M18 16 Q32 4 46 16 Z" fill="#451a03"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 34 36 29" stroke="#451a03" stroke-width="2.5" fill="none"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#facc15" stroke="#16a34a" stroke-width="2.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="shirt-num">11</div>
+          <div class="shirt-num">11</div>
+          <div class="player-right">
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fed7aa"/>
+                <path d="M18 16 Q32 6 46 16 Z" fill="#451a03"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="player-name-text">Karl Bell</span><span class="stars-box">⭐⭐⭐⭐</span><span class="ovr-tag">84</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">85</span><span class="stars-box">⭐⭐⭐⭐</span><span class="player-name-text">Martinelli</span>
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fed7aa"/>
+                <path d="M18 16 Q32 6 46 16 Z" fill="#451a03"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <circle cx="24" cy="26" r="3" fill="#f87171"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#facc15" stroke="#16a34a" stroke-width="2.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="shirt-num">20</div>
+          <div class="shirt-num">9</div>
+          <div class="player-right">
+            <div class="sc-cartoon-avatar">
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fbcfe8"/>
+                <path d="M18 16 Q32 6 46 16 Z" fill="#ca8a04"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="player-name-text">Sam Wimble</span><span class="stars-box">⭐⭐⭐⭐⭐</span><span class="ovr-tag">88</span>
+          </div>
+        </div>
+
+        <div class="lineup-row">
+          <div class="player-left">
+            <span class="ovr-tag">88</span><span class="stars-box">⭐⭐⭐⭐⭐</span><span class="player-name-text">Endrick</span>
+            <div class="sc-cartoon-avatar">
+              <!-- Endrick Cartoon -->
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fba17b"/>
+                <path d="M16 16 Q32 2 48 16 Q44 10 32 10 Q20 10 16 16" fill="#1e293b"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <circle cx="24" cy="26" r="3" fill="#f87171"/>
+                <path d="M28 29 Q32 34 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#facc15" stroke="#16a34a" stroke-width="2.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="shirt-num">9</div>
+          <div class="shirt-num">10</div>
+          <div class="player-right">
+            <div class="sc-cartoon-avatar">
+              <!-- Richard Simpson Cartoon -->
+              <svg viewBox="0 0 64 64" width="44" height="48">
+                <circle cx="32" cy="22" r="14" fill="#fed7aa"/>
+                <path d="M18 16 Q32 4 46 16 Z" fill="#451a03"/>
+                <circle cx="27" cy="21" r="2.5" fill="#1e293b"/><circle cx="37" cy="21" r="2.5" fill="#1e293b"/>
+                <circle cx="24" cy="26" r="3" fill="#f87171"/>
+                <path d="M20 28 Q32 36 44 28 L42 34 Q32 38 22 34 Z" fill="#451a03"/>
+                <path d="M28 29 Q32 33 36 29 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+                <path d="M18 36 L46 36 L44 58 L20 58 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="2.5"/>
+              </svg>
+            </div>
+            <span class="player-name-text">Richard Simpson</span><span class="stars-box">⭐⭐⭐⭐⭐</span><span class="ovr-tag">87</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================
+       VIEW 3: PARTIDA AO VIVO (ESTÁDIO CARTOON 2D & MOMENTUM BAR)
+  ======================================================== -->
+  <div class="view-screen" id="view-match">
+    <div class="match-simulation-container">
+      
+      <!-- Placar da Partida -->
+      <div class="match-scoreboard">
+        <div class="score-team"><span>🇧🇷 BRASIL</span></div>
+        <div class="score-numbers" id="score-text">1 x 0</div>
+        <div class="score-team"><span>INGLATERRA 🏴󠁧󠁢󠁥󠁮󠁧󠁿</span></div>
+        <div class="score-timer" id="match-timer">34' MIN</div>
+      </div>
+
+      <!-- ESTÁDIO COM OS PERSONAGENS JOGANDO AO VIVO (ESTILO SOCCER CHAMPS FOTO) -->
+      <div class="soccer-champs-live-stage">
+        <div class="stage-center-circle"></div>
+        <div class="stage-center-line"></div>
+
+        <!-- Atleta Brasil (Atacante / Voleio / Chute no estilo da foto) -->
+        <div class="stage-character" id="stage-br-character" style="left: 65%; top: 25%; transform: scale(1.1) rotate(-10deg);">
+          <svg viewBox="0 0 120 140" width="100" height="120">
+            <!-- Sombra no Gramado -->
+            <ellipse cx="60" cy="125" rx="35" ry="10" fill="#14532d" opacity="0.6"/>
+            <!-- Perna Esquerda (Apoio / Salto) -->
+            <rect x="40" y="80" width="14" height="32" rx="6" fill="#facc15" transform="rotate(-25 40 80)"/>
+            <rect x="30" y="100" width="12" height="20" rx="5" fill="#fba17b" transform="rotate(-25 30 100)"/>
+            <!-- Shorts -->
+            <path d="M35 70 L85 70 L80 96 L40 96 Z" fill="#1d4ed8" stroke="#0f172a" stroke-width="2.5"/>
+            <text x="68" y="88" fill="#ffffff" font-weight="900" font-size="12">10</text>
+            <!-- Tronco Camisa Brasil -->
+            <path d="M35 40 L85 40 L82 72 L38 72 Z" fill="#facc15" stroke="#16a34a" stroke-width="3"/>
+            <!-- Perna Direita (Voleio / Chute alto estilo foto!) -->
+            <rect x="68" y="65" width="16" height="35" rx="6" fill="#fba17b" transform="rotate(-55 68 65)"/>
+            <rect x="88" y="48" width="14" height="24" rx="5" fill="#ffffff" transform="rotate(-35 88 48)"/>
+            <!-- Chuteira Branca -->
+            <path d="M102 36 L118 40 L115 52 L96 46 Z" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+            <!-- Cabeça Cartoon (Estilo foto Soccer Champs) -->
+            <circle cx="60" cy="26" r="22" fill="#fba17b" stroke="#0f172a" stroke-width="2"/>
+            <!-- Cabelo Quiff / Moicano -->
+            <path d="M36 20 Q60 -4 84 20 Q76 10 60 10 Q44 10 36 20" fill="#1e293b"/>
+            <!-- Orelha Rosa/Laranja -->
+            <circle cx="36" cy="28" r="6" fill="#fba17b" stroke="#0f172a" stroke-width="1.5"/>
+            <circle cx="36" cy="28" r="3" fill="#ea580c"/>
+            <!-- Bochecha Vermelha Rosada -->
+            <circle cx="48" cy="32" r="5" fill="#f87171"/>
+            <!-- Sobrancelha e Olho Pill -->
+            <rect x="52" y="16" width="12" height="4" rx="2" fill="#1e293b"/>
+            <rect x="54" y="23" width="10" height="5" rx="2.5" fill="#1e293b"/>
+            <!-- Sorriso com Barba -->
+            <path d="M46 38 Q60 50 74 38 L72 45 Q60 55 48 45 Z" fill="#1e293b"/>
+            <path d="M52 39 Q60 45 68 39 Z" fill="#ffffff"/>
+          </svg>
+          <div class="stage-player-name">Endrick (10) 🇧🇷</div>
+        </div>
+
+        <!-- A Bola Hovering (Estilo da Foto) -->
+        <div class="stage-ball" id="stage-soccer-ball" style="left: 78%; top: 22%;">
+          <svg viewBox="0 0 64 64" width="36" height="36">
+            <circle cx="32" cy="32" r="28" fill="#ffffff" stroke="#0f172a" stroke-width="4"/>
+            <polygon points="32,16 44,25 39,39 25,39 20,25" fill="#0f172a"/>
+            <polygon points="32,4 40,12 24,12" fill="#0f172a"/>
+            <polygon points="56,24 48,30 54,42" fill="#0f172a"/>
+            <polygon points="8,24 16,30 10,42" fill="#0f172a"/>
+            <polygon points="26,56 38,56 32,48" fill="#0f172a"/>
+          </svg>
+        </div>
+
+        <!-- Atleta Inglaterra (Goleiro / Zagueiro em Posição de Defesa) -->
+        <div class="stage-character" id="stage-eng-character" style="left: 86%; top: 40%; transform: scale(1.05);">
+          <svg viewBox="0 0 120 140" width="85" height="105">
+            <ellipse cx="60" cy="125" rx="30" ry="8" fill="#14532d" opacity="0.6"/>
+            <!-- Pernas -->
+            <rect x="42" y="90" width="14" height="28" rx="6" fill="#ffffff"/>
+            <rect x="64" y="90" width="14" height="28" rx="6" fill="#ffffff"/>
+            <!-- Shorts Inglaterra -->
+            <path d="M38 68 L82 68 L78 92 L42 92 Z" fill="#1e293b" stroke="#0f172a" stroke-width="2"/>
+            <!-- Camisa Branca Inglaterra -->
+            <path d="M38 38 L82 38 L78 68 L42 68 Z" fill="#ffffff" stroke="#1e3a8a" stroke-width="3"/>
+            <!-- Braços em Alerta -->
+            <rect x="20" y="44" width="20" height="12" rx="6" fill="#fed7aa" transform="rotate(-20 20 44)"/>
+            <rect x="80" y="44" width="20" height="12" rx="6" fill="#fed7aa" transform="rotate(20 80 44)"/>
+            <!-- Cabeça -->
+            <circle cx="60" cy="24" r="20" fill="#fed7aa" stroke="#0f172a" stroke-width="2"/>
+            <path d="M40 18 Q60 4 80 18 Z" fill="#ca8a04"/>
+            <circle cx="48" cy="22" r="2.5" fill="#1e293b"/><circle cx="62" cy="22" r="2.5" fill="#1e293b"/>
+            <path d="M52 30 Q60 34 68 30" stroke="#0f172a" stroke-width="2.5" fill="none"/>
+          </svg>
+          <div class="stage-player-name">Sam Jackson 🏴󠁧󠁢󠁥󠁮󠁧󠁿</div>
+        </div>
+      </div>
+
+      <!-- BARRA DE PROGRESSÃO COM ATLETAS (ATAQUE/DEFESA/NEUTRO) -->
+      <div class="territory-box">
+        <div class="territory-header">
+          <span>Barra de Progresso e Território de Campo (Momentum Tracker)</span>
+          <span style="color: #f87171;" id="current-zone-lbl">Ataque Pressionando 🔥</span>
+        </div>
+
+        <div class="zone-labels">
+          <span class="lbl-def">🛡️ DEFESA (0 - 33%)</span>
+          <span class="lbl-mid">⚖️ NEUTRO / MEIO (34 - 66%)</span>
+          <span class="lbl-att">⚔️ ATAQUE / PERIGO (67 - 100%)</span>
+        </div>
+
+        <!-- O TRILHO DA BARRA COM AS 3 ÁREAS -->
+        <div class="momentum-track">
+          <div class="momentum-divider" style="left: 33.33%;"></div>
+          <div class="momentum-divider" style="left: 66.66%;"></div>
+
+          <!-- ATLETA ANIMADO COM ROSTO CARTOON MOSTRANDO PRESSÃO -->
+          <div class="athlete-marker" id="live-athlete" style="left: 80%;">
+            <svg viewBox="0 0 64 64" width="28" height="28" style="margin-right: -4px;">
+              <circle cx="32" cy="32" r="28" fill="#fba17b" stroke="#0f172a" stroke-width="3"/>
+              <path d="M14 24 Q32 6 50 24 Z" fill="#1e293b"/>
+              <circle cx="24" cy="30" r="3" fill="#1e293b"/><circle cx="40" cy="30" r="3" fill="#1e293b"/>
+              <circle cx="20" cy="36" r="3.5" fill="#f87171"/>
+              <path d="M26 42 Q32 48 38 42 Z" fill="#ffffff" stroke="#1e293b" stroke-width="2"/>
+            </svg>
+            <span>⚽</span>
+            <span id="athlete-team-name">Endrick (Ataque 🔥)</span>
+          </div>
+        </div>
+
+        <!-- Badge Dinâmico de Status -->
+        <div class="status-badge-live status-att" id="status-desc">
+          ⚡ ZONA DE PERIGO: Endrick avança com a bola no campo de ataque da Inglaterra armando um voleio espetacular!
+        </div>
+      </div>
+
+      <!-- Feed de Lances em Tempo Real -->
+      <div class="commentary-feed" id="commentary-feed">
+        <div class="comm-item"><span class="comm-time">34'</span><span class="comm-text">Endrick arranca em velocidade, sobe no ar e prepara o voleio de bicicleta na zona ofensiva!</span></div>
+        <div class="comm-item"><span class="comm-time">28'</span><span class="comm-text">GOOOOOL DO BRASIL! ⚽ Vini Jr acerta uma pancada no ângulo esquerdo do goleiro Sam Jackson!</span></div>
+        <div class="comm-item"><span class="comm-time">19'</span><span class="comm-text">A bola passa pelo meio-campo (Zona Neutra). Bruno Guimarães domina com categoria.</span></div>
+        <div class="comm-item"><span class="comm-time">12'</span><span class="comm-text">Inglaterra pressionou na Defesa Brasileira, mas Marquinhos cortou de cabeça com segurança!</span></div>
+        <div class="comm-item"><span class="comm-time">01'</span><span class="comm-text">Apita o árbitro! Começa o grande clássico internacional no padrão Soccer Champs!</span></div>
+      </div>
+
+      <!-- Controles de Simulação -->
+      <div style="display: flex; gap: 14px;">
+        <button class="btn-action-glow" style="background: linear-gradient(135deg, #eab308, #ca8a04); border-color: #fde047; font-size: 1.05rem;" onclick="simulateNextMomentum()">
+          ⚡ SIMULAR PRÓXIMO LANCE (MOVER PERSONAGENS NO ESTÁDIO E BARRA)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    /* ========================================================
+       CONTROLE DE NAVEGAÇÃO ENTRE AS 3 TELAS
+    ======================================================== */
+    function switchView(viewName) {
+      document.querySelectorAll('.view-screen').forEach(v => v.classList.remove('active-view'));
+      document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+
+      document.getElementById('btn-go-lineup').style.display = 'none';
+      document.getElementById('btn-start-match').style.display = 'none';
+      document.getElementById('btn-back-team').style.display = 'none';
+
+      if (viewName === 'team') {
+        document.getElementById('view-team').classList.add('active-view');
+        document.getElementById('tab-team').classList.add('active');
+        document.getElementById('btn-go-lineup').style.display = 'flex';
+      } else if (viewName === 'lineup') {
+        document.getElementById('view-lineup').classList.add('active-view');
+        document.getElementById('tab-lineup').classList.add('active');
+        document.getElementById('btn-start-match').style.display = 'flex';
+      } else if (viewName === 'match') {
+        document.getElementById('view-match').classList.add('active-view');
+        document.getElementById('tab-match').classList.add('active');
+        document.getElementById('btn-back-team').style.display = 'flex';
+      }
+    }
+
+    /* ========================================================
+       LÓGICA DE SIMULAÇÃO DO ESTÁDIO E BARRA DE PROGRESSO
+    ======================================================== */
+    const momentumStates = [
+      { 
+        pos: 16, zone: 'DEFESA', colorClass: 'status-def', 
+        text: '🛡️ ZONA DEFENSIVA: Alisson orienta a zaga enquanto a Inglaterra pressiona forte na área do Brasil.', 
+        label: 'Alisson (Defesa 🛡️)',
+        stageBrPos: { left: '18%', top: '45%', rot: '0deg' },
+        stageBallPos: { left: '26%', top: '48%' },
+        stageEngPos: { left: '38%', top: '40%' }
+      },
+      { 
+        pos: 30, zone: 'DEFESA', colorClass: 'status-def', 
+        text: '🛡️ SAÍDA DE BOLA: Gabriel Magalhães toca com Danilo na lateral direita para escapar da marcação inglesa.', 
+        label: 'Danilo (Saída 🛡️)',
+        stageBrPos: { left: '32%', top: '55%', rot: '0deg' },
+        stageBallPos: { left: '42%', top: '52%' },
+        stageEngPos: { left: '55%', top: '48%' }
+      },
+      { 
+        pos: 50, zone: 'NEUTRO', colorClass: 'status-mid', 
+        text: '⚖️ MEIO DE CAMPO: Disputa intensa pela posse de bola na região central do gramado. Bruno G. ganha a dividida!', 
+        label: 'Bruno G. (Meio ⚖️)',
+        stageBrPos: { left: '48%', top: '35%', rot: '0deg' },
+        stageBallPos: { left: '54%', top: '38%' },
+        stageEngPos: { left: '62%', top: '38%' }
+      },
+      { 
+        pos: 66, zone: 'NEUTRO', colorClass: 'status-mid', 
+        text: '⚖️ TRANSIÇÃO RÁPIDA: Vini Jr acelera a transição ofensiva cruzando a linha divisória do meio em alta velocidade!', 
+        label: 'Vini Jr (Transição Rápida)',
+        stageBrPos: { left: '62%', top: '30%', rot: '-5deg' },
+        stageBallPos: { left: '72%', top: '32%' },
+        stageEngPos: { left: '80%', top: '36%' }
+      },
+      { 
+        pos: 82, zone: 'ATAQUE', colorClass: 'status-att', 
+        text: '⚡ ZONA DE PERIGO: Endrick avança com a bola no campo de ataque armando o voleio espetacular da foto!', 
+        label: 'Endrick (Ataque 🔥)',
+        stageBrPos: { left: '65%', top: '25%', rot: '-10deg' },
+        stageBallPos: { left: '78%', top: '22%' },
+        stageEngPos: { left: '86%', top: '40%' }
+      },
+      { 
+        pos: 92, zone: 'ATAQUE', colorClass: 'status-att', 
+        text: '🚨 CHUTE AO GOL! Raphinha corta para dentro e dispara um foguete no canto do goleiro Sam Jackson!', 
+        label: 'Raphinha (Chute Pro Gol!)',
+        stageBrPos: { left: '76%', top: '32%', rot: '-15deg' },
+        stageBallPos: { left: '88%', top: '45%' },
+        stageEngPos: { left: '89%', top: '38%' }
+      }
+    ];
+    let currentMomIndex = 4; // Começa na posição 4 (82% Ataque com o voleio)
+    let liveMinutes = 34;
+
+    function simulateNextMomentum() {
+      currentMomIndex = (currentMomIndex + 1) % momentumStates.length;
+      liveMinutes += Math.floor(Math.random() * 6) + 3;
+      if (liveMinutes > 90) liveMinutes = 90;
+
+      const state = momentumStates[currentMomIndex];
+      const marker = document.getElementById('live-athlete');
+      const desc = document.getElementById('status-desc');
+      const timer = document.getElementById('match-timer');
+      const feed = document.getElementById('commentary-feed');
+
+      // Move a barra de atletas
+      marker.style.left = state.pos + '%';
+      document.getElementById('athlete-team-name').innerText = state.label;
+      timer.innerText = liveMinutes + "' MIN";
+
+      // Move os personagens no Estádio 2D ao vivo
+      const brChar = document.getElementById('stage-br-character');
+      const ball = document.getElementById('stage-soccer-ball');
+      const engChar = document.getElementById('stage-eng-character');
+
+      brChar.style.left = state.stageBrPos.left;
+      brChar.style.top = state.stageBrPos.top;
+      brChar.style.transform = `scale(1.1) rotate(${state.stageBrPos.rot})`;
+
+      ball.style.left = state.stageBallPos.left;
+      ball.style.top = state.stageBallPos.top;
+
+      engChar.style.left = state.stageEngPos.left;
+      engChar.style.top = state.stageEngPos.top;
+
+      // Atualiza cores da zona
+      desc.className = 'status-badge-live ' + state.colorClass;
+      desc.innerText = state.text;
+      document.getElementById('current-zone-lbl').innerText = state.zone === 'ATAQUE' ? 'Ataque Pressionando 🔥' : (state.zone === 'NEUTRO' ? 'Meio de Campo ⚖️' : 'Defesa Segura 🛡️');
+
+      // Adiciona no feed
+      const newElem = document.createElement('div');
+      newElem.className = 'comm-item';
+      newElem.innerHTML = `<span class="comm-time">${liveMinutes}'</span><span class="comm-text">${state.text}</span>`;
+      feed.prepend(newElem);
+
+      if (liveMinutes === 90 && currentMomIndex === 5) {
+        document.getElementById('score-text').innerText = "2 x 0";
+        alert("🎉 GOOOOL FINAL DO BRASIL! Vitória por 2 a 0 consolidada!");
+      }
+    }
+
+    /* ========================================================
+       LÓGICA DO TEAM MANAGEMENT (SUBSTITUIÇÕES E FORMAÇÃO)
+    ======================================================== */
+    let selectedSlot = null;
+    const formacoes = ["4-5-1", "4-4-2", "4-3-3", "3-5-2"];
+    let formacaoIndex = 0;
+    const mentalities = ["Neutral", "Attacking", "Defensive", "All-Out"];
+    let mentalityIndex = 0;
+    const pressures = ["Normal", "High Press", "Low Block"];
+    let pressureIndex = 0;
+
+    function handleSlotClick(id, type) {
+      const elementId = type === 'campo' ? `slot-${id}` : `${type}-${id}`;
+      const elem = document.getElementById(elementId);
+
+      if (!selectedSlot) {
+        selectedSlot = { id, type, elem };
+        elem.classList.add(type === 'campo' ? 'selected-slot' : 'selected-sub');
+        document.getElementById('swap-notice').style.display = 'flex';
+        return;
+      }
+
+      if (selectedSlot.id === id && selectedSlot.type === type) {
+        elem.classList.remove('selected-slot', 'selected-sub');
+        selectedSlot = null;
+        document.getElementById('swap-notice').style.display = 'none';
+        return;
+      }
+
+      swapPlayerData(selectedSlot.elem, elem);
+      selectedSlot.elem.classList.remove('selected-slot', 'selected-sub');
+      elem.classList.remove('selected-slot', 'selected-sub');
+      selectedSlot = null;
+      document.getElementById('swap-notice').style.display = 'none';
+    }
+
+    function swapPlayerData(elemA, elemB) {
+      const posA = elemA.querySelector('.pos-badge').innerText;
+      const posClassA = elemA.querySelector('.pos-badge').className;
+      const ovrA = elemA.querySelector('.ovr-number').innerText;
+      const nameA = elemA.querySelector('.player-label').innerText;
+
+      const posB = elemB.querySelector('.pos-badge').innerText;
+      const posClassB = elemB.querySelector('.pos-badge').className;
+      const ovrB = elemB.querySelector('.ovr-number').innerText;
+      const nameB = elemB.querySelector('.player-label').innerText;
+
+      elemA.querySelector('.pos-badge').innerText = posB;
+      elemA.querySelector('.pos-badge').className = posClassB;
+      elemA.querySelector('.ovr-number').innerText = ovrB;
+      elemA.querySelector('.player-label').innerText = nameB;
+
+      elemB.querySelector('.pos-badge').innerText = posA;
+      elemB.querySelector('.pos-badge').className = posClassA;
+      elemB.querySelector('.ovr-number').innerText = ovrA;
+      elemB.querySelector('.player-label').innerText = nameA;
+
+      elemA.style.transform = "scale(1.25)";
+      elemB.style.transform = "scale(1.25)";
+      setTimeout(() => { elemA.style.transform = ""; elemB.style.transform = ""; }, 300);
+    }
+
+    function changeFormation(dir) {
+      formacaoIndex = (formacaoIndex + dir + formacoes.length) % formacoes.length;
+      document.getElementById('val-formation').innerText = formacoes[formacaoIndex];
+      document.getElementById('lineup-formation-br').innerText = formacoes[formacaoIndex];
+
+      const pitchSlots = document.querySelectorAll('.player-slot');
+      pitchSlots.forEach(slot => { slot.style.transition = "all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)"; });
+
+      if (formacoes[formacaoIndex] === "4-4-2") {
+        document.getElementById('slot-0').style.top = "16%"; document.getElementById('slot-0').style.left = "36%";
+        document.getElementById('slot-1').style.top = "16%"; document.getElementById('slot-1').style.left = "64%";
+        document.getElementById('slot-2').style.top = "42%"; document.getElementById('slot-2').style.left = "30%";
+        document.getElementById('slot-3').style.top = "42%"; document.getElementById('slot-3').style.left = "70%";
+      } else if (formacoes[formacaoIndex] === "4-3-3") {
+        document.getElementById('slot-0').style.top = "15%"; document.getElementById('slot-0').style.left = "50%";
+        document.getElementById('slot-1').style.top = "20%"; document.getElementById('slot-1').style.left = "22%";
+        document.getElementById('slot-2').style.top = "20%"; document.getElementById('slot-2').style.left = "78%";
+        document.getElementById('slot-3').style.top = "46%"; document.getElementById('slot-3').style.left = "35%";
+      } else {
+        document.getElementById('slot-0').style.top = "14%"; document.getElementById('slot-0').style.left = "50%";
+        document.getElementById('slot-1').style.top = "30%"; document.getElementById('slot-1').style.left = "32%";
+        document.getElementById('slot-2').style.top = "30%"; document.getElementById('slot-2').style.left = "68%";
+        document.getElementById('slot-3').style.top = "42%"; document.getElementById('slot-3').style.left = "14%";
+      }
+    }
+
+    function toggleMentality() {
+      mentalityIndex = (mentalityIndex + 1) % mentalities.length;
+      document.getElementById('val-mentality').innerText = mentalities[mentalityIndex];
+    }
+
+    function togglePressure() {
+      pressureIndex = (pressureIndex + 1) % pressures.length;
+      document.getElementById('val-pressure').innerText = pressures[pressureIndex];
+    }
+  </script>
+</body>
+</html>
