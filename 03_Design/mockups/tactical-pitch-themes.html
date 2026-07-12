@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aprovação Visual - Campinho Tático Interativo (Champions 7-0)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #0b0f19;
+      --color-card: #151c2c;
+      --color-border: #222d44;
+      --color-text: #f3f4f6;
+      --color-muted: #9ca3af;
+      --color-accent: #00cc00;
+      --color-gold: #ffd700;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      max-width: 1200px;
+      padding: 30px 20px 10px;
+      text-align: center;
+    }
+
+    .badge-header {
+      background: linear-gradient(135deg, var(--color-gold), #b8860b);
+      color: #000;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-family: 'Anton', sans-serif;
+      font-size: 2.2rem;
+      margin: 0;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: linear-gradient(to right, #fff, var(--color-gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--color-muted);
+      font-size: 0.95rem;
+      max-width: 600px;
+      margin: 10px auto 30px;
+      line-height: 1.5;
+    }
+
+    main {
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 20px 60px;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    @media (min-width: 900px) {
+      main {
+        grid-template-columns: 320px 1fr;
+      }
+    }
+
+    /* Sidebar controls */
+    .controls-panel {
+      background-color: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--color-gold);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin: 0 0 12px 0;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 8px;
+    }
+
+    .theme-option {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .theme-option:hover {
+      background-color: rgba(255, 255, 255, 0.07);
+      transform: translateY(-2px);
+    }
+
+    .theme-option.active {
+      border-color: var(--color-gold);
+      background-color: rgba(255, 215, 0, 0.05);
+    }
+
+    .theme-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .theme-badge {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .theme-desc {
+      font-size: 0.75rem;
+      color: var(--color-muted);
+      line-height: 1.3;
+    }
+
+    .color-dots {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* Showcase tactical board */
+    .showcase-area {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .tactical-board-preview {
+      background-color: #080c14;
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .tactical-board-preview {
+        grid-template-columns: 1fr 300px;
+      }
+    }
+
+    /* Pitch Styles */
+    .pitch-container-outer {
+      aspect-ratio: 4 / 5;
+      background-color: #03070d;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.5s ease;
+    }
+
+    .pitch-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px 0;
+      box-sizing: border-box;
+      transition: all 0.5s ease;
+    }
+
+    /* Pitch Markings */
+    .pitch-line {
+      position: absolute;
+      border-style: solid;
+      pointer-events: none;
+      opacity: 0.3;
+      transition: all 0.5s ease;
+    }
+
+    /* Themes CSS configurations dynamically switched */
+    /* Theme A: Dark Premium */
+    .pitch-theme-dark-premium {
+      background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+    }
+    .pitch-theme-dark-premium .pitch-line {
+      border-color: #d97706; /* bronze/gold line */
+      opacity: 0.25;
+    }
+    .pitch-theme-dark-premium .pitch-grass-shading {
+      background: linear-gradient(180deg, rgba(255,255,255,0.01) 50%, transparent 50%);
+      background-size: 100% 40px;
+    }
+
+    /* Theme B: Neon Glow */
+    .pitch-theme-neon-glow {
+      background: radial-gradient(circle at center, #020617 0%, #000000 100%);
+      box-shadow: inset 0 0 40px rgba(0, 240, 255, 0.1);
+    }
+    .pitch-theme-neon-glow .pitch-line {
+      border-color: #00f0ff;
+      filter: drop-shadow(0 0 4px #00f0ff);
+      opacity: 0.4;
+    }
+    .pitch-theme-neon-glow .pitch-center-circle {
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    }
+
+    /* Theme C: Classic Retro */
+    .pitch-theme-classic-retro {
+      background: #1b4332;
+    }
+    .pitch-theme-classic-retro .pitch-line {
+      border-color: #ffffff;
+      opacity: 0.6;
+    }
+    .pitch-theme-classic-retro .pitch-grass-shading {
+      background: repeating-linear-gradient(90deg, #1b4332, #1b4332 30px, #1b4d3e 30px, #1b4d3e 60px);
+    }
+
+    /* Theme D: Midnight Forest */
+    .pitch-theme-midnight-forest {
+      background: radial-gradient(circle at center, #0f2e21 0%, #051610 100%);
+    }
+    .pitch-theme-midnight-forest .pitch-line {
+      border-color: #4ade80;
+      opacity: 0.35;
+    }
+    .pitch-theme-midnight-forest .pitch-grass-shading {
+      background: repeating-linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 35px, transparent 35px, transparent 70px);
+    }
+
+    /* Theme E: Futuristic Hologram */
+    .pitch-theme-futuristic-hologram {
+      background: #020c1b;
+      background-image: linear-gradient(rgba(0, 102, 255, 0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 102, 255, 0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .pitch-theme-futuristic-hologram .pitch-line {
+      border-color: #3b82f6;
+      filter: drop-shadow(0 0 2px #3b82f6);
+      opacity: 0.4;
+    }
+
+    /* Field lines positioning */
+    .pitch-outer-boundary {
+      top: 15px;
+      bottom: 15px;
+      left: 15px;
+      right: 15px;
+      border-width: 1.5px;
+    }
+    .pitch-midline {
+      top: 50%;
+      left: 15px;
+      right: 15px;
+      height: 0;
+      border-top-width: 1.5px;
+      transform: translateY(-50%);
+    }
+    .pitch-center-circle {
+      top: 50%;
+      left: 50%;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border-width: 1.5px;
+      transform: translate(-50%, -50%);
+    }
+    .pitch-penalty-area-top {
+      top: 15px;
+      left: 20%;
+      right: 20%;
+      height: 12%;
+      border-width: 0 1.5px 1.5px 1.5px;
+    }
+    .pitch-penalty-area-bottom {
+      bottom: 15px;
+      left: 20%;
+      right: 20%;
+      height: 12%;
+      border-width: 1.5px 1.5px 0 1.5px;
+    }
+
+    /* Player Node styling */
+    .player-node {
+      position: absolute;
+      width: 46px;
+      height: 46px;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .player-shirt {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #111, #333);
+      border: 2px solid #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .player-node:hover .player-shirt {
+      transform: scale(1.1);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    }
+
+    /* Node Selected State */
+    .player-node.selected-node .player-shirt {
+      border-color: var(--color-gold) !important;
+      box-shadow: 0 0 14px var(--color-gold) !important;
+      animation: pulsate 1.5s infinite alternate;
+    }
+
+    @keyframes pulsate {
+      0% { transform: scale(1.05); }
+      100% { transform: scale(1.15); }
+    }
+
+    .player-name-tag {
+      font-size: 0.62rem;
+      font-weight: 700;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-top: 4px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 65px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .player-pos-badge {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      font-size: 0.52rem;
+      font-weight: 900;
+      background-color: #000;
+      color: var(--color-gold);
+      border: 1px solid var(--color-border);
+      padding: 1px 3px;
+      border-radius: 3px;
+    }
+
+    /* Theme colors for shirts */
+    .pitch-theme-dark-premium .player-shirt {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border-color: #d97706;
+    }
+    .pitch-theme-neon-glow .player-shirt {
+      background: linear-gradient(135deg, #0f172a, #020617);
+      border-color: #00ff66;
+      box-shadow: 0 0 8px rgba(0,255,102,0.3);
+      color: #00ff66;
+    }
+    .pitch-theme-neon-glow .player-node.selected-node .player-shirt {
+      border-color: #00f0ff !important;
+      box-shadow: 0 0 14px #00f0ff !important;
+    }
+    .pitch-theme-classic-retro .player-shirt {
+      background: linear-gradient(135deg, #cc0000, #990000);
+      border-color: #fff;
+    }
+    .pitch-theme-midnight-forest .player-shirt {
+      background: linear-gradient(135deg, #22c55e, #15803d);
+      border-color: #fff;
+    }
+    .pitch-theme-futuristic-hologram .player-shirt {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: #3b82f6;
+      box-shadow: inset 0 0 8px rgba(59, 130, 246, 0.5);
+      color: #3b82f6;
+    }
+
+    /* Bench Panel */
+    .bench-panel {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--color-border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .bench-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--color-muted);
+      margin: 0;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .bench-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .bench-player-row {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .bench-player-row:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .bench-player-row.selected-bench {
+      border-color: var(--color-gold);
+      background-color: rgba(255, 215, 0, 0.05);
+    }
+
+    .bench-player-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pos-tag {
+      font-size: 0.65rem;
+      font-weight: 900;
+      padding: 2px 5px;
+      border-radius: 4px;
+      min-width: 22px;
+      text-align: center;
+    }
+
+    .pos-gk { background-color: rgba(234, 179, 8, 0.15); color: #eab308; }
+    .pos-df { background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .pos-mf { background-color: rgba(168, 85, 247, 0.15); color: #a855f7; }
+    .pos-fw { background-color: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+    .bench-player-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .bench-player-ovr {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--color-accent);
+    }
+
+    /* Decision Approval Panel */
+    .approval-card {
+      background-color: var(--color-card);
+      border: 2px dashed rgba(255, 215, 0, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .decision-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 600px) {
+      .decision-row {
+        grid-template-columns: 200px 1fr;
+      }
+    }
+
+    .decision-select {
+      background-color: #0b0f19;
+      color: #fff;
+      border: 1px solid var(--color-border);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .decision-notes {
+      background-color: #0b0f19;
+      color: #fff;
+      border: 1px solid var(--color-border);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      resize: vertical;
+      font-size: 0.85rem;
+      min-height: 40px;
+    }
+
+    .approve-btn {
+      background: linear-gradient(135deg, var(--color-gold), #b8860b);
+      color: #000;
+      font-family: 'Anton', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: all 0.25s ease;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .approve-btn:hover {
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .success-alert {
+      background-color: rgba(0, 204, 0, 0.1);
+      border: 1px solid rgba(0, 204, 0, 0.3);
+      color: #00ff66;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.85rem;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge-header">Aprovação de Design (GD-UX-HTML-APPROVAL-001)</div>
+    <h1>Módulo Tático Interativo</h1>
+    <p class="subtitle">
+      Escolha o estilo visual do campinho tático para o Modo Carreira do Champions 7-0. Teste a interatividade simulada nos controles abaixo.
+    </p>
+  </header>
+
+  <main>
+    <!-- Left panel: Theme selector controls -->
+    <div class="controls-panel">
+      <h3 class="section-title">Opções Estéticas</h3>
+
+      <!-- Option A -->
+      <div class="theme-option active" data-theme="dark-premium" onclick="selectTheme('dark-premium')">
+        <div class="theme-header">
+          <span>Opção A: Dark Premium</span>
+          <span class="theme-badge" style="background-color: #d97706; color: #fff;">Recomendado</span>
+        </div>
+        <div class="theme-desc">Visual executivo em carbono e dourado, com glows elegantes. Combina perfeitamente com a paleta principal do Champions 7-0.</div>
+        <div class="color-dots">
+          <div class="dot" style="background-color: #111827;"></div>
+          <div class="dot" style="background-color: #030712;"></div>
+          <div class="dot" style="background-color: #d97706;"></div>
+        </div>
+      </div>
+
+      <!-- Option B -->
+      <div class="theme-option" data-theme="neon-glow" onclick="selectTheme('neon-glow')">
+        <div class="theme-header">
+          <span>Opção B: Neon Glow</span>
+          <span class="theme-badge" style="background-color: #00ff66; color: #000;">Moderno</span>
+        </div>
+        <div class="theme-desc">Marcações de campo e botões de jogadores brilhando em verde-neon e ciber-ciano. Estilo arcade cyberpunk.</div>
+        <div class="color-dots">
+          <div class="dot" style="background-color: #020617;"></div>
+          <div class="dot" style="background-color: #00ff66;"></div>
+          <div class="dot" style="background-color: #00f0ff;"></div>
+        </div>
+      </div>
+
+      <!-- Option C -->
+      <div class="theme-option" data-theme="classic-retro" onclick="selectTheme('classic-retro')">
+        <div class="theme-header">
+          <span>Opção C: Classic Retro</span>
+          <span class="theme-badge" style="background-color: #fff; color: #000;">Nostálgico</span>
+        </div>
+        <div class="theme-desc">Lousa clássica de tática em verde-esmeralda fosco com marcações em giz branco. Nostalgia pura estilo Elifoot.</div>
+        <div class="color-dots">
+          <div class="dot" style="background-color: #1b4332;"></div>
+          <div class="dot" style="background-color: #ffffff;"></div>
+          <div class="dot" style="background-color: #cc0000;"></div>
+        </div>
+      </div>
+
+      <!-- Option D -->
+      <div class="theme-option" data-theme="midnight-forest" onclick="selectTheme('midnight-forest')">
+        <div class="theme-header">
+          <span>Opção D: Midnight Forest</span>
+          <span class="theme-badge" style="background-color: #4ade80; color: #000;">Realista</span>
+        </div>
+        <div class="theme-desc">Gramado realista em tons escuros alternados com listras e marcações verde-claras clássicas. Estilo simulador tradicional.</div>
+        <div class="color-dots">
+          <div class="dot" style="background-color: #0f2e21;"></div>
+          <div class="dot" style="background-color: #051610;"></div>
+          <div class="dot" style="background-color: #4ade80;"></div>
+        </div>
+      </div>
+
+      <!-- Option E -->
+      <div class="theme-option" data-theme="futuristic-hologram" onclick="selectTheme('futuristic-hologram')">
+        <div class="theme-header">
+          <span>Opção E: Cyber Hologram</span>
+          <span class="theme-badge" style="background-color: #3b82f6; color: #fff;">Futurista</span>
+        </div>
+        <div class="theme-desc">Holograma de centro tático militar digital com linhas azuis elétricas e grid quadriculado.</div>
+        <div class="color-dots">
+          <div class="dot" style="background-color: #020c1b;"></div>
+          <div class="dot" style="background-color: #3b82f6;"></div>
+          <div class="dot" style="background-color: rgba(0, 102, 255, 0.1);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right panel: Interactive Board Showcase -->
+    <div class="showcase-area">
+      <div class="tactical-board-preview">
+        <!-- Column 1: Interactive Pitch -->
+        <div class="pitch-container-outer">
+          <div class="pitch-canvas pitch-theme-dark-premium" id="pitch-view">
+            <div class="pitch-grass-shading" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
+            
+            <!-- Lines -->
+            <div class="pitch-line pitch-outer-boundary"></div>
+            <div class="pitch-line pitch-midline"></div>
+            <div class="pitch-line pitch-center-circle"></div>
+            <div class="pitch-line pitch-penalty-area-top"></div>
+            <div class="pitch-line pitch-penalty-area-bottom"></div>
+
+            <!-- Slots (4-4-2 default layout) -->
+            <!-- GK -->
+            <div class="player-node" style="top: 90%; left: 50%;" onclick="clickPitchSlot(0)">
+              <div class="player-shirt" id="shirt-0">1</div>
+              <span class="player-name-tag" id="name-0">Alisson</span>
+              <span class="player-pos-badge">GK</span>
+            </div>
+            <!-- DF -->
+            <div class="player-node" style="top: 70%; left: 20%;" onclick="clickPitchSlot(1)">
+              <div class="player-shirt" id="shirt-1">2</div>
+              <span class="player-name-tag" id="name-1">D. Alves</span>
+              <span class="player-pos-badge">DF</span>
+            </div>
+            <div class="player-node" style="top: 73%; left: 40%;" onclick="clickPitchSlot(2)">
+              <div class="player-shirt" id="shirt-2">3</div>
+              <span class="player-name-tag" id="name-2">T. Silva</span>
+              <span class="player-pos-badge">DF</span>
+            </div>
+            <div class="player-node" style="top: 73%; left: 60%;" onclick="clickPitchSlot(3)">
+              <div class="player-shirt" id="shirt-3">4</div>
+              <span class="player-name-tag" id="name-3">Marquinhos</span>
+              <span class="player-pos-badge">DF</span>
+            </div>
+            <div class="player-node" style="top: 70%; left: 80%;" onclick="clickPitchSlot(4)">
+              <div class="player-shirt" id="shirt-4">6</div>
+              <span class="player-name-tag" id="name-4">F. Luis</span>
+              <span class="player-pos-badge">DF</span>
+            </div>
+            <!-- MF -->
+            <div class="player-node" style="top: 45%; left: 20%;" onclick="clickPitchSlot(5)">
+              <div class="player-shirt" id="shirt-5">8</div>
+              <span class="player-name-tag" id="name-5">Casemiro</span>
+              <span class="player-pos-badge">MF</span>
+            </div>
+            <div class="player-node" style="top: 42%; left: 40%;" onclick="clickPitchSlot(6)">
+              <div class="player-shirt" id="shirt-6">5</div>
+              <span class="player-name-tag" id="name-6">Gerson</span>
+              <span class="player-pos-badge">MF</span>
+            </div>
+            <div class="player-node" style="top: 42%; left: 60%;" onclick="clickPitchSlot(7)">
+              <div class="player-shirt" id="shirt-7">10</div>
+              <span class="player-name-tag" id="name-7">Lucas Paquetá</span>
+              <span class="player-pos-badge">MF</span>
+            </div>
+            <div class="player-node" style="top: 45%; left: 80%;" onclick="clickPitchSlot(8)">
+              <div class="player-shirt" id="shirt-8">7</div>
+              <span class="player-name-tag" id="name-8">Everton C.</span>
+              <span class="player-pos-badge">MF</span>
+            </div>
+            <!-- FW -->
+            <div class="player-node" style="top: 20%; left: 35%;" onclick="clickPitchSlot(9)">
+              <div class="player-shirt" id="shirt-9">9</div>
+              <span class="player-name-tag" id="name-9">Richarlison</span>
+              <span class="player-pos-badge">FW</span>
+            </div>
+            <div class="player-node" style="top: 20%; left: 65%;" onclick="clickPitchSlot(10)">
+              <div class="player-shirt" id="shirt-10">11</div>
+              <span class="player-name-tag" id="name-10">Neymar Jr</span>
+              <span class="player-pos-badge">FW</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 2: Reservas -->
+        <div class="bench-panel">
+          <h4 class="bench-title">🔄 Banco de Reservas</h4>
+          <div class="bench-list">
+            <div class="bench-player-row" id="bench-p1" onclick="clickBenchPlayer('bench-p1', 'Ederson', 'GK', 86)">
+              <div class="bench-player-info">
+                <span class="pos-tag pos-gk">GK</span>
+                <span class="bench-player-name">Ederson</span>
+              </div>
+              <span class="bench-player-ovr">86 OVR</span>
+            </div>
+            <div class="bench-player-row" id="bench-p2" onclick="clickBenchPlayer('bench-p2', 'Militao', 'DF', 84)">
+              <div class="bench-player-info">
+                <span class="pos-tag pos-df">DF</span>
+                <span class="bench-player-name">E. Militão</span>
+              </div>
+              <span class="bench-player-ovr">84 OVR</span>
+            </div>
+            <div class="bench-player-row" id="bench-p3" onclick="clickBenchPlayer('bench-p3', 'Bruno G.', 'MF', 83)">
+              <div class="bench-player-info">
+                <span class="pos-tag pos-mf">MF</span>
+                <span class="bench-player-name">Bruno G.</span>
+              </div>
+              <span class="bench-player-ovr">83 OVR</span>
+            </div>
+            <div class="bench-player-row" id="bench-p4" onclick="clickBenchPlayer('bench-p4', 'Rodrygo', 'FW', 85)">
+              <div class="bench-player-info">
+                <span class="pos-tag pos-fw">FW</span>
+                <span class="bench-player-name">Rodrygo</span>
+              </div>
+              <span class="bench-player-ovr">85 OVR</span>
+            </div>
+            <div class="bench-player-row" id="bench-p5" onclick="clickBenchPlayer('bench-p5', 'Vinicius Jr', 'FW', 89)">
+              <div class="bench-player-info">
+                <span class="pos-tag pos-fw">FW</span>
+                <span class="bench-player-name">Vinicius Jr</span>
+              </div>
+              <span class="bench-player-ovr">89 OVR</span>
+            </div>
+          </div>
+          <div style="font-size: 0.7rem; color: var(--color-muted); text-align: center; margin-top: 5px;">
+            Clique em uma posição no campo e depois no reserva para escalá-lo.
+          </div>
+        </div>
+      </div>
+
+      <!-- Decision Panel -->
+      <div class="approval-card">
+        <h4 class="bench-title" style="color: var(--color-gold); font-size: 0.95rem;">Decisão de Homologação</h4>
+        <p style="margin: 0; font-size: 0.8rem; color: var(--color-muted);">
+          Escolha a sua opção preferida e salve para registrar a aprovação visual.
+        </p>
+        <div class="decision-row">
+          <select id="selected-theme-decision" class="decision-select">
+            <option value="dark-premium">Opção A: Dark Premium</option>
+            <option value="neon-glow">Opção B: Neon Glow</option>
+            <option value="classic-retro">Opção C: Classic Retro</option>
+            <option value="midnight-forest">Opção D: Midnight Forest</option>
+            <option value="futuristic-hologram">Opção E: Cyber Hologram</option>
+          </select>
+          <input type="text" id="decision-notes" class="decision-notes" placeholder="Ajustes desejados ou observações (opcional)">
+        </div>
+        <button class="approve-btn" onclick="saveDecision()">
+          <span>Aprovar Design do Campinho ✅</span>
+        </button>
+        <div class="success-alert" id="success-alert">
+          ✓ Decisão salva no navegador com sucesso! Estilo <strong id="approved-style-name">Dark Premium</strong> selecionado.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let activeTheme = 'dark-premium';
+    let selectedSlotIndex = null;
+    let selectedBenchRowId = null;
+    let selectedBenchName = '';
+    let selectedBenchOvr = 80;
+
+    const slotNames = [
+      "Alisson", "D. Alves", "T. Silva", "Marquinhos", "F. Luis",
+      "Casemiro", "Gerson", "Lucas Paquetá", "Everton C.", "Richarlison", "Neymar Jr"
+    ];
+
+    function selectTheme(theme) {
+      activeTheme = theme;
+      
+      // Update options UI
+      document.querySelectorAll('.theme-option').forEach(opt => {
+        opt.classList.remove('active');
+        if(opt.getAttribute('data-theme') === theme) {
+          opt.classList.add('active');
+        }
+      });
+
+      // Update select dropdown
+      document.getElementById('selected-theme-decision').value = theme;
+
+      // Update pitch preview classes
+      const pitch = document.getElementById('pitch-view');
+      pitch.className = 'pitch-canvas pitch-theme-' + theme;
+    }
+
+    function clickPitchSlot(index) {
+      selectedSlotIndex = index;
+      
+      // Highlight slot on UI
+      document.querySelectorAll('.player-node').forEach((node, i) => {
+        if(i === index) {
+          node.classList.add('selected-node');
+        } else {
+          node.classList.remove('selected-node');
+        }
+      });
+
+      // Attempt substitution if bench player is selected
+      if(selectedBenchRowId !== null) {
+        performSubstitution();
+      }
+    }
+
+    function clickBenchPlayer(rowId, name, position, ovr) {
+      selectedBenchRowId = rowId;
+      selectedBenchName = name;
+      selectedBenchOvr = ovr;
+
+      // Highlight row on UI
+      document.querySelectorAll('.bench-player-row').forEach(row => {
+        row.classList.remove('selected-bench');
+      });
+      document.getElementById(rowId).classList.add('selected-bench');
+
+      // Attempt substitution if slot is selected
+      if(selectedSlotIndex !== null) {
+        performSubstitution();
+      }
+    }
+
+    function performSubstitution() {
+      if(selectedSlotIndex === null || selectedBenchRowId === null) return;
+
+      // Get current values to perform visual swap
+      const currentSlotName = document.getElementById('name-' + selectedSlotIndex).innerText;
+      const currentSlotOvr = 80; // Placeholder average
+
+      // Update slot with bench player
+      document.getElementById('name-' + selectedSlotIndex).innerText = selectedBenchName;
+      
+      // Update bench row with slot player
+      const row = document.getElementById(selectedBenchRowId);
+      const rowNameSpan = row.querySelector('.bench-player-name');
+      const rowOvrSpan = row.querySelector('.bench-player-ovr');
+
+      rowNameSpan.innerText = currentSlotName;
+      rowOvrSpan.innerText = currentSlotOvr + " OVR";
+
+      // Reset selection highlights
+      document.querySelectorAll('.player-node').forEach(node => {
+        node.classList.remove('selected-node');
+      });
+      document.querySelectorAll('.bench-player-row').forEach(r => {
+        r.classList.remove('selected-bench');
+      });
+
+      selectedSlotIndex = null;
+      selectedBenchRowId = null;
+    }
+
+    function saveDecision() {
+      const select = document.getElementById('selected-theme-decision');
+      const approvedStyle = select.options[select.selectedIndex].text;
+      const notes = document.getElementById('decision-notes').value;
+
+      localStorage.setItem('mx:approved-tactic-style', select.value);
+      localStorage.setItem('mx:approved-tactic-notes', notes);
+
+      document.getElementById('approved-style-name').innerText = approvedStyle;
+      const alert = document.getElementById('success-alert');
+      alert.style.display = 'block';
+
+      setTimeout(() => {
+        alert.style.opacity = '0';
+        alert.style.transition = 'opacity 1s ease';
+        setTimeout(() => {
+          alert.style.display = 'none';
+          alert.style.opacity = '1';
+        }, 1000);
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
